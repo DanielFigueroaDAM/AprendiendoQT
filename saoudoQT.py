@@ -25,14 +25,22 @@ class NosaPrimeiraFiestra(QMainWindow):
 
         self.txtSaudo = QLineEdit()
 
-        self.txtSaudo.placeholderText()
+        self.txtSaudo.setPlaceholderText("Introduce o teu nome")
 
         btnSaudo = QPushButton("pulsa aqui")
         btnSaudo.clicked.connect(self.on_btnSaudo_clicked)
 
+
+
+
+        btnFiestra = QPushButton("Outra Fiestra")
+        btnFiestra.clicked.connect(self.cambioVentana)
+
         caixaV.addWidget(self.lblEtiqueta)
         caixaV.addWidget(self.txtSaudo)
         caixaV.addWidget(btnSaudo)
+        caixaV.addWidget(btnFiestra)
+
 
         container = QWidget()
 
@@ -42,7 +50,13 @@ class NosaPrimeiraFiestra(QMainWindow):
 
         self.txtSaudo.returnPressed.connect(self.on_btnSaudo_clicked)
 
+
+
         self.show()
+
+
+    def cambioVentana(self):
+        pass
 
     def on_btnSaudo_clicked(self):
         nome = self.txtSaudo.text()
