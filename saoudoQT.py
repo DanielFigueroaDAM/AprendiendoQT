@@ -69,11 +69,6 @@ class NosaPrimeiraFiestra(QMainWindow):
 
 
 
-
-
-
-
-
 if __name__ == "__main__":
     aplicacion = QApplication(sys.argv)
     fiestra = NosaPrimeiraFiestra()
