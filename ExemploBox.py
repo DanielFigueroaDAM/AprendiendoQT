@@ -1,5 +1,5 @@
 import sys
-import CaixaCor
+import ExemplosCor
 
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QMainWindow, QApplication, QWidget
 
@@ -21,7 +21,7 @@ class ExemploBox(QMainWindow):
 
         caixaH.addLayout(caixaV2)
 
-        self.centralWidget(QWidget().setLayout(caixaH))
+        self.setCentralWidget(QWidget().setLayout(caixaH))
 
         self.show()
 
