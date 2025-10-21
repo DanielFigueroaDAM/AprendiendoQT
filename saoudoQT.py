@@ -59,6 +59,7 @@ class NosaPrimeiraFiestra(QMainWindow):
         # Botón para abrir otra ventana
         btnFiestra = QPushButton("Outra Fiestra")
         btnFiestra.clicked.connect(self.cambioVentana)
+        
 
         # Añade los widgets al layout vertical
         caixaV.addWidget(self.lblEtiqueta)
