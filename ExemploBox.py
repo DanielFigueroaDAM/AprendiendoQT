@@ -30,3 +30,16 @@ if __name__ == "__main__":
     fiestra = ExemploBox()
     fiestra.show()
     sys.exit(aplicacion.exec())
+
+
+# Layouts
+
+# maia = QGridLayourt()
+# maia.addWidget(CaixaCor.CaixaCor("red"))
+# maia.addWidget(CaixaCor.CaixaCor("blue"),0,1,1,2))
+# maia.addWidget(CaixaCor.CaixaCor("green"),1,0,2,1))
+# maia.addWidget(CaixaCor.CaixaCor("green"),1,1,1,2))
+# maia.addWidget(CaixaCor.CaixaCor("green"),2,1,1,1))
+# maia.addWidget(CaixaCor.CaixaCor("yellow"),2,2,1,1))
+#
+#
