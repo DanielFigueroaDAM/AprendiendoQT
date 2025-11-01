@@ -579,3 +579,151 @@ image_label.resize(self.width(), self.height())
 - **Layouts** para mejor posicionamiento automático
 - **Estilos CSS** para personalizar apariencia
 - **Iconos** en los botones
+
+# Guía de PyQt6 - Continuación
+
+## 18. Introducción a QHBoxLayout
+
+### Código de Layout Horizontal
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout)
+
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+
+    def inicializarUI(self):
+        self.setMinimumWidth(600)
+        self.setFixedHeight(80)
+        self.setWindowTitle('Layout Horizontal')
+        self.generar_formulario()
+        self.show()
+
+    def generar_formulario(self):
+        correo_label = QLabel("Correo electrónico: ")
+        correo_input = QLineEdit()
+        enviar_button = QPushButton("Enviar")
+
+        layout = QHBoxLayout()
+        layout.addWidget(correo_label)
+        layout.addWidget(correo_input)
+        layout.addWidget(enviar_button)
+
+        self.setLayout(layout) # Definimos nuestro layout como el layout principal de la ventana
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    ventana = MainWindow()
+    sys.exit(app.exec())
+```
+
+### Explicación del Código
+
+#### Importación de QHBoxLayout
+```python
+from PyQt6.QtWidgets import QHBoxLayout
+```
+- **QHBoxLayout**: Layout que organiza widgets en una fila horizontal
+
+#### Creación del Layout
+```python
+layout = QHBoxLayout()
+```
+Crea un nuevo layout horizontal vacío.
+
+#### Agregar Widgets al Layout
+```python
+layout.addWidget(correo_label)
+layout.addWidget(correo_input)
+layout.addWidget(enviar_button)
+```
+- **addWidget()**: Añade un widget al layout en orden secuencial
+
+#### Establecer el Layout Principal
+```python
+self.setLayout(layout)
+```
+- **setLayout()**: Define este layout como el principal de la ventana
+
+### Métodos Útiles de QHBoxLayout
+
+#### Espaciado entre Widgets
+```python
+layout.setSpacing(10)  # 10 píxeles entre cada widget
+```
+
+#### Configurar Márgenes
+```python
+layout.setContentsMargins(20, 10, 20, 10)  # izquierda, arriba, derecha, abajo
+```
+
+#### Agregar Espacio Elástico
+```python
+layout.addStretch()  # Espacio que se expande para empujar widgets
+```
+
+### Ejemplo Mejorado con Funcionalidad
+```python
+def generar_formulario(self):
+    correo_label = QLabel("Correo electrónico: ")
+    self.correo_input = QLineEdit()  # Guardar referencia
+    self.correo_input.setPlaceholderText("ejemplo@correo.com")
+    
+    enviar_button = QPushButton("Enviar")
+    enviar_button.clicked.connect(self.enviar_correo)  # Conectar señal
+
+    layout = QHBoxLayout()
+    layout.setSpacing(15)  # Espacio entre widgets
+    layout.setContentsMargins(20, 20, 20, 20)  # Márgenes
+    
+    layout.addWidget(correo_label)
+    layout.addWidget(self.correo_input)
+    layout.addWidget(enviar_button)
+    
+    self.setLayout(layout)
+
+def enviar_correo(self):
+    correo = self.correo_input.text()
+    if correo:
+        QMessageBox.information(self, "Éxito", f"Correo enviado a: {correo}")
+    else:
+        QMessageBox.warning(self, "Error", "Por favor ingrese un correo electrónico")
+```
+
+### Ventajas de Usar Layouts vs Posicionamiento Absoluto
+
+#### Con Layouts (Recomendado)
+```python
+layout = QHBoxLayout()
+layout.addWidget(QLabel("Texto"))
+layout.addWidget(QLineEdit())
+self.setLayout(layout)
+```
+
+#### Con Posicionamiento Absoluto (Menos Flexible)
+```python
+label = QLabel("Texto", self)
+label.move(10, 10)
+input = QLineEdit(self)
+input.move(60, 10)
+input.resize(200, 25)
+```
+
+**Beneficios de los layouts:**
+- Se adaptan automáticamente al redimensionar la ventana
+- Mantienen las proporciones entre widgets
+- Más fácil de mantener y modificar
+- Mejor organización del código
+
+### Nota sobre la Importación Duplicada
+En tu código hay:
+```python
+from PyQt6.QtWidgets import (..., QHBoxLayout, QHBoxLayout)
+```
+Puedes eliminar la duplicidad:
+```python
+from PyQt6.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout)
+```
+
