@@ -727,3 +727,180 @@ Puedes eliminar la duplicidad:
 from PyQt6.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout)
 ```
 
+# Guía de PyQt6 - Continuación
+
+## 19. QVBoxLayout y Manejo de Señales
+
+### Código de Layout Vertical
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QPushButton, QVBoxLayout, QMessageBox)
+
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+
+    def inicializarUI(self):
+        self.setMinimumHeight(200)
+        self.setFixedWidth(200)
+        self.setWindowTitle('Layout Vertical')
+        self.generar_formulario()
+        self.show()
+
+    def generar_formulario(self):
+        boton1 = QPushButton("Botón #1")
+        boton2 = QPushButton("Botón #2")
+        boton3 = QPushButton("Botón #3")
+        boton4 = QPushButton("Botón #4")
+
+        boton1.clicked.connect(self.imprimir_nombre_boton)
+        boton2.clicked.connect(self.imprimir_nombre_boton)
+        boton3.clicked.connect(self.imprimir_nombre_boton)
+        boton4.clicked.connect(self.imprimir_nombre_boton)
+
+        layout = QVBoxLayout()
+        layout.addWidget(boton1)
+        layout.addWidget(boton2)
+        layout.addWidget(boton3)
+        layout.addWidget(boton4)
+
+        self.setLayout(layout)  # Definimos nuestro layout como el layout principal de la ventana
+
+    def imprimir_nombre_boton(self):
+        boton = self.sender() # Obtiene el botón que envió la señal
+        QMessageBox.information(self,"Boton press",f"Has presionado el {boton.text()}", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok)
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    ventana = MainWindow()
+    sys.exit(app.exec())
+```
+
+### Explicación del Código
+
+#### Importación de QVBoxLayout
+```python
+from PyQt6.QtWidgets import QVBoxLayout
+```
+- **QVBoxLayout**: Layout que organiza widgets en una columna vertical
+
+#### Configuración de la Ventana
+```python
+self.setMinimumHeight(200)
+self.setFixedWidth(200)
+```
+- **setMinimumHeight()**: Establece la altura mínima de la ventana
+- **setFixedWidth()**: Fija el ancho de la ventana (no redimensionable)
+
+#### Creación de Botones
+```python
+boton1 = QPushButton("Botón #1")
+boton2 = QPushButton("Botón #2")
+# ...
+```
+
+#### Conexión Múltiple a la Misma Función
+```python
+boton1.clicked.connect(self.imprimir_nombre_boton)
+boton2.clicked.connect(self.imprimir_nombre_boton)
+# ...
+```
+Los 4 botones están conectados a la misma función `imprimir_nombre_boton`
+
+#### Creación del Layout Vertical
+```python
+layout = QVBoxLayout()
+layout.addWidget(boton1)
+layout.addWidget(boton2)
+layout.addWidget(boton3)
+layout.addWidget(boton4)
+self.setLayout(layout)
+```
+
+### La Función sender() - Concepto Importante
+
+```python
+def imprimir_nombre_boton(self):
+    boton = self.sender() # Obtiene el botón que envió la señal
+    QMessageBox.information(self,"Boton press",f"Has presionado el {boton.text()}", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok)
+```
+
+#### ¿Qué hace sender()?
+- **sender()**: Retorna el objeto que emitió la señal
+- Permite identificar qué widget específico activó la función
+- Útil cuando múltiples widgets están conectados a la misma función
+
+### Métodos Útiles de QVBoxLayout
+
+#### Espaciado entre Widgets
+```python
+layout.setSpacing(10)  # 10 píxeles entre cada widget
+```
+
+#### Configurar Márgenes
+```python
+layout.setContentsMargins(20, 20, 20, 20)  # izquierda, arriba, derecha, abajo
+```
+
+#### Agregar Espacio Elástico
+```python
+layout.addStretch()  # Espacio que se expande para empujar widgets
+```
+
+### Ejemplo Mejorado con Más Configuraciones
+```python
+def generar_formulario(self):
+    boton1 = QPushButton("Botón #1")
+    boton2 = QPushButton("Botón #2")
+    boton3 = QPushButton("Botón #3")
+    boton4 = QPushButton("Botón #4")
+    
+    # Configurar tamaño de botones
+    for boton in [boton1, boton2, boton3, boton4]:
+        boton.setFixedHeight(40)
+        boton.clicked.connect(self.imprimir_nombre_boton)
+
+    layout = QVBoxLayout()
+    layout.setSpacing(10)  # Espacio entre botones
+    layout.setContentsMargins(20, 20, 20, 20)  # Márgenes
+    
+    layout.addWidget(boton1)
+    layout.addWidget(boton2)
+    layout.addStretch()  # Espacio elástico entre botón 2 y 3
+    layout.addWidget(boton3)
+    layout.addWidget(boton4)
+    
+    self.setLayout(layout)
+```
+
+### Comparación: QHBoxLayout vs QVBoxLayout
+
+#### QHBoxLayout (Anterior)
+```python
+layout = QHBoxLayout()
+layout.addWidget(widget1)  # ← Widget1 | Widget2 | Widget3 →
+layout.addWidget(widget2)
+layout.addWidget(widget3)
+```
+
+#### QVBoxLayout (Actual)
+```python
+layout = QVBoxLayout()
+layout.addWidget(widget1)  # ↑ Widget1
+layout.addWidget(widget2)  #   Widget2
+layout.addWidget(widget3)  #   Widget3 ↓
+```
+
+### Ventajas de QVBoxLayout
+
+1. **Organización vertical**: Ideal para formularios, listas de opciones
+2. **Escalabilidad**: Fácil agregar más elementos sin recalcular posiciones
+3. **Responsive**: Se adapta automáticamente al contenido
+
+### Casos de Uso Comunes para QVBoxLayout
+
+- Formularios de registro/login
+- Listas de opciones/configuración
+- Paneles de control verticales
+- Menús de navegación
