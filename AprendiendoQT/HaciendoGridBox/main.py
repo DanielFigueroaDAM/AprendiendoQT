@@ -5,6 +5,13 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.inicializarUI()
+        self.pimerValor = ""
+        self.segundoValor = ""
+        self.operacion = ""
+        self.pinter_flag = "1"
+        self.after_equal = False
+        self.after_operator = False
+
 
     def inicializarUI(self):
         self.setGeometry(100,100,600, 400)
@@ -27,6 +34,25 @@ class MainWindow(QWidget):
         boton_0 = QPushButton("0")
         boton_00 = QPushButton("00")
         boton_punto = QPushButton(".")
+
+
+        # Conectamos los botones numéricos a la función ingresar_datos
+        boton_1.clicked.connect(self.ingresar_datos)
+        boton_2.clicked.connect(self.ingresar_datos)
+        boton_3.clicked.connect(self.ingresar_datos)
+        boton_4.clicked.connect(self.ingresar_datos)
+        boton_5.clicked.connect(self.ingresar_datos)
+        boton_6.clicked.connect(self.ingresar_datos)
+        boton_7.clicked.connect(self.ingresar_datos)
+        boton_8.clicked.connect(self.ingresar_datos)
+        boton_9.clicked.connect(self.ingresar_datos)
+        boton_0.clicked.connect(self.ingresar_datos)
+        boton_00.clicked.connect(self.ingresar_datos)
+        boton_punto.clicked.connect(self.ingresar_datos)
+
+
+
+
         boton_suma = QPushButton("+")
         boton_resta = QPushButton("-")
         boton_multiplicacion = QPushButton("*")
@@ -58,6 +84,12 @@ class MainWindow(QWidget):
         self.main_grid.addWidget(boton_igual,6,3) # 6 fila 3 columna
 
         self.setLayout(self.main_grid)
+
+    def ingresar_datos(self):
+        boton_text = self.sender().text()
+        if self.pointer_flag == "1":
+            self.primerValor += boton_text
+            self.pantalla.setText(self.primerValor)
 
 
 
