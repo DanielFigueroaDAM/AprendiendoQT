@@ -580,7 +580,6 @@ image_label.resize(self.width(), self.height())
 - **Estilos CSS** para personalizar apariencia
 - **Iconos** en los botones
 
-# Guía de PyQt6 - Continuación
 
 ## 18. Introducción a QHBoxLayout
 
@@ -727,7 +726,6 @@ Puedes eliminar la duplicidad:
 from PyQt6.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout)
 ```
 
-# Guía de PyQt6 - Continuación
 
 ## 19. QVBoxLayout y Manejo de Señales
 
@@ -904,3 +902,425 @@ layout.addWidget(widget3)  #   Widget3 ↓
 - Listas de opciones/configuración
 - Paneles de control verticales
 - Menús de navegación
+
+
+## 20. Layouts Anidados
+
+### Código de Layouts Anidados
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QMessageBox, QLabel, QLineEdit)
+
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+
+    def inicializarUI(self):
+        self.setGeometry(100,100,400,150)
+        self.setWindowTitle('Layouts Anidados')
+        self.generar_formulario()
+        self.show()
+
+    def generar_formulario(self):
+        mensaje_principal = QLabel("Por favor ingrasa sus datos: ")
+
+        nombre_label = QLabel("Nombre: ")
+        self.nombres_input = QLineEdit()
+        apellido_label = QLabel("Apellido: ")
+        self.apellidos_input = QLineEdit()
+        edad_label = QLabel("Edad: ")
+        self.edad_input = QLineEdit()
+        correo_label = QLabel("Correo: ")
+        self.correo_input = QLineEdit()
+        direccion_label = QLabel("Dirección: ")
+        self.direccion_input = QLineEdit()
+        telefono_label = QLabel("Teléfono: ")
+        self.telefono_input = QLineEdit()
+        
+        
+        # Ajustamos el ancho de las etiquetas para que queden alineadas
+        nombre_label.setFixedWidth(90)
+        apellido_label.setFixedWidth(90)
+        edad_label.setFixedWidth(90)
+        correo_label.setFixedWidth(90)
+        direccion_label.setFixedWidth(90)
+        telefono_label.setFixedWidth(90)
+
+        enviar_boton = QPushButton("Enviar")
+
+        # creamos el layout vertical principal
+        vertical_layout_main = QVBoxLayout()
+
+        # creamos los layouts horizontales
+        h_layout_1 = QHBoxLayout()
+        h_layout_2 = QHBoxLayout()
+        h_layout_3 = QHBoxLayout()
+
+        # agregamos los widgets a los layouts horizontales
+        h_layout_1.addWidget(nombre_label)
+        h_layout_1.addWidget(self.nombres_input)
+        h_layout_1.addWidget(correo_label)
+        h_layout_1.addWidget(self.correo_input)
+
+        h_layout_2.addWidget(apellido_label)
+        h_layout_2.addWidget(self.apellidos_input)
+        h_layout_2.addWidget(direccion_label)
+        h_layout_2.addWidget(self.direccion_input)
+
+        h_layout_3.addWidget(edad_label)
+        h_layout_3.addWidget(self.edad_input)
+        h_layout_3.addWidget(telefono_label)
+        h_layout_3.addWidget(self.telefono_input)
+
+        # agregamos los layouts horizontales al layout vertical principal
+        vertical_layout_main.addWidget(mensaje_principal)
+        vertical_layout_main.addLayout(h_layout_1)
+        vertical_layout_main.addLayout(h_layout_2)
+        vertical_layout_main.addLayout(h_layout_3)
+        vertical_layout_main.addWidget(enviar_boton)
+
+        self.setLayout(vertical_layout_main)  # Definimos nuestro layout como el layout principal de la ventana
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    ventana = MainWindow()
+    sys.exit(app.exec())
+```
+
+### Explicación del Código
+
+#### Concepto de Layouts Anidados
+Los layouts anidados consisten en combinar diferentes tipos de layouts (verticales y horizontales) para crear interfaces más complejas y organizadas.
+
+#### Estructura de Layouts en Este Ejemplo
+```
+QVBoxLayout (principal)
+├── QLabel (mensaje_principal)
+├── QHBoxLayout (h_layout_1)
+│   ├── QLabel (nombre)
+│   ├── QLineEdit (nombres)
+│   ├── QLabel (correo)
+│   └── QLineEdit (correo)
+├── QHBoxLayout (h_layout_2)
+│   ├── QLabel (apellido)
+│   ├── QLineEdit (apellidos)
+│   ├── QLabel (dirección)
+│   └── QLineEdit (dirección)
+├── QHBoxLayout (h_layout_3)
+│   ├── QLabel (edad)
+│   ├── QLineEdit (edad)
+│   ├── QLabel (teléfono)
+│   └── QLineEdit (teléfono)
+└── QPushButton (enviar_boton)
+```
+
+#### Configuración de Ancho Fijo para Etiquetas
+```python
+nombre_label.setFixedWidth(90)
+apellido_label.setFixedWidth(90)
+# ...
+```
+- **setFixedWidth()**: Establece un ancho fijo para el widget
+- **Propósito**: Alinear verticalmente todos los labels para una apariencia más ordenada
+
+#### Creación de Layouts Anidados
+```python
+# Layout vertical principal
+vertical_layout_main = QVBoxLayout()
+
+# Layouts horizontales anidados
+h_layout_1 = QHBoxLayout()
+h_layout_2 = QHBoxLayout()
+h_layout_3 = QHBoxLayout()
+```
+
+#### Agregar Layouts Dentro de Otros Layouts
+```python
+vertical_layout_main.addLayout(h_layout_1)
+vertical_layout_main.addLayout(h_layout_2)
+vertical_layout_main.addLayout(h_layout_3)
+```
+- **addLayout()**: Agrega un layout dentro de otro layout
+
+### Ventajas de los Layouts Anidados
+
+1. **Organización compleja**: Permiten crear interfaces con estructuras más elaboradas
+2. **Mantenimiento fácil**: Cada sección puede modificarse independientemente
+3. **Responsive**: Se adaptan mejor al redimensionamiento
+4. **Código más limpio**: Mejor organización y legibilidad
+
+### Métodos Útiles para Mejorar los Layouts Anidados
+
+#### Configurar Espaciado Consistente
+```python
+# Configurar espaciado para todos los layouts
+vertical_layout_main.setSpacing(10)
+h_layout_1.setSpacing(15)
+h_layout_2.setSpacing(15)
+h_layout_3.setSpacing(15)
+```
+
+#### Establecer Márgenes
+```python
+vertical_layout_main.setContentsMargins(20, 20, 20, 20)
+```
+
+#### Agregar Stretch para Controlar Espacios
+```python
+# Para que los campos de entrada ocupen más espacio
+h_layout_1.addWidget(nombre_label)
+h_layout_1.addWidget(self.nombres_input, 1)  # Proporción 1
+h_layout_1.addWidget(correo_label)
+h_layout_1.addWidget(self.correo_input, 2)   # Proporción 2 (más espacio)
+```
+
+### Ejemplo Mejorado con Validación
+```python
+def generar_formulario(self):
+    # ... (código anterior de creación de widgets)
+    
+    enviar_boton.clicked.connect(self.validar_formulario)
+    
+    # ... (código anterior de layouts)
+
+def validar_formulario(self):
+    # Validar que todos los campos estén completos
+    campos = [
+        ("Nombre", self.nombres_input.text()),
+        ("Apellido", self.apellidos_input.text()),
+        ("Edad", self.edad_input.text()),
+        ("Correo", self.correo_input.text()),
+        ("Dirección", self.direccion_input.text()),
+        ("Teléfono", self.telefono_input.text())
+    ]
+    
+    campos_vacios = [nombre for nombre, valor in campos if not valor.strip()]
+    
+    if campos_vacios:
+        QMessageBox.warning(self, "Campos vacíos", 
+                           f"Los siguientes campos están vacíos: {', '.join(campos_vacios)}")
+    else:
+        QMessageBox.information(self, "Éxito", "Formulario enviado correctamente")
+```
+
+### Consejos para Diseñar con Layouts Anidados
+
+1. **Planificar la estructura**: Dibujar la interfaz en papel antes de codificar
+2. **Usar nombres descriptivos**: Para los layouts y variables
+3. **Mantener la consistencia**: Mismos márgenes y espaciado en todos los layouts
+4. **Probar el redimensionamiento**: Verificar que la interfaz se vea bien en diferentes tamaños
+
+### Casos de Uso Comunes para Layouts Anidados
+
+- Formularios complejos con múltiples secciones
+- Paneles de control con agrupaciones lógicas
+- Interfaces de aplicaciones con barras de herramientas y áreas de contenido
+- Cuadros de diálogo con múltiples opciones organizadas
+
+
+## 21. QGridLayout - Diseño en Cuadrícula
+
+### Código de Calculadora con QGridLayout
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QTextEdit, QPushButton, QGridLayout, QMessageBox)
+
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+
+    def inicializarUI(self):
+        self.setGeometry(100,100,600, 400)
+        self.setWindowTitle("Calculadora Simple")
+        self.generar_interfaz()
+        self.show()
+
+    def generar_interfaz(self):
+        self.pantalla = QTextEdit(self)
+        self.pantalla.setDisabled(True)
+        boton_1 = QPushButton("1")
+        boton_2 = QPushButton("2")
+        boton_3 = QPushButton("3")
+        boton_4 = QPushButton("4")
+        boton_5 = QPushButton("5")
+        boton_6 = QPushButton("6")
+        boton_7 = QPushButton("7")
+        boton_8 = QPushButton("8")
+        boton_9 = QPushButton("9")
+        boton_0 = QPushButton("0")
+        boton_00 = QPushButton("00")
+        boton_punto = QPushButton(".")
+        boton_suma = QPushButton("+")
+        boton_resta = QPushButton("-")
+        boton_multiplicacion = QPushButton("*")
+        boton_division = QPushButton("/")
+        boton_igual = QPushButton("=")
+        boton_clear = QPushButton("CE")
+        boton_borrar = QPushButton("<-")
+
+        self.main_grid = QGridLayout()
+        self.main_grid.addWidget(self.pantalla,0,0,2,4) # 0 fila, 0 columna, ocupa 2 filas y 4 columnas
+        self.main_grid.addWidget(boton_clear, 2,0, 1,2) # 2 fila, 0 columna, ocupa 1 fila y 2 columnas
+        self.main_grid.addWidget(boton_borrar,2,2) # 2 fila, 2 columna(ocupa 1 fila y 1 columna por defecto)
+        self.main_grid.addWidget(boton_suma,2,3) # 2 fila, 3 columna
+        self.main_grid.addWidget(boton_7,3,0) # 3 fila 0 columna
+        self.main_grid.addWidget(boton_8,3,1) # 3 fila 1 columna
+        self.main_grid.addWidget(boton_9,3,2) # 3 fila 2 columna
+        self.main_grid.addWidget(boton_division,3, 3) # 3 fila 3 columna
+        self.main_grid.addWidget(boton_4,4,0) # 4 fila 0 columna
+        self.main_grid.addWidget(boton_5,4,1) # 4 fila
+        self.main_grid.addWidget(boton_6,4,2) # 4 fila 2 columna
+        self.main_grid.addWidget(boton_multiplicacion,4,3) # 4 fila 3 columna
+        self.main_grid.addWidget(boton_1,5,0) # 5 fila 0 columna
+        self.main_grid.addWidget(boton_2,5,1) # 5 fila 1 columna
+        self.main_grid.addWidget(boton_3,5,2) # 5 fila 2 columna
+        self.main_grid.addWidget(boton_resta,5,3) # 5 fila 3 columna
+        self.main_grid.addWidget(boton_0,6,0) # 6 fila 0 columna
+        self.main_grid.addWidget(boton_00,6,1) # 6 fila 1 columna
+        self.main_grid.addWidget(boton_punto,6,2) # 6 fila 2 columna
+        self.main_grid.addWidget(boton_igual,6,3) # 6 fila 3 columna
+
+        self.setLayout(self.main_grid)
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    ventana = MainWindow()
+    sys.exit(app.exec())
+```
+
+### Explicación del Código
+
+#### QGridLayout - Layout de Cuadrícula
+```python
+self.main_grid = QGridLayout()
+```
+- **QGridLayout**: Organiza widgets en una cuadrícula de filas y columnas
+- Ideal para interfaces que necesitan disposición tabular como calculadoras, teclados, etc.
+
+#### Sintaxis de addWidget en QGridLayout
+```python
+self.main_grid.addWidget(widget, fila, columna, rowSpan, colSpan)
+```
+
+**Parámetros:**
+- **widget**: El widget a agregar
+- **fila**: Número de fila (empieza en 0)
+- **columna**: Número de columna (empieza en 0)
+- **rowSpan**: Cuántas filas ocupa (opcional, default: 1)
+- **colSpan**: Cuántas columnas ocupa (opcional, default: 1)
+
+#### Ejemplos del Código
+
+**Pantalla que ocupa 2 filas y 4 columnas:**
+```python
+self.main_grid.addWidget(self.pantalla, 0, 0, 2, 4)
+```
+- Fila: 0
+- Columna: 0
+- Ocupa 2 filas
+- Ocupa 4 columnas
+
+**Botón CE que ocupa 1 fila y 2 columnas:**
+```python
+self.main_grid.addWidget(boton_clear, 2, 0, 1, 2)
+```
+
+**Botón normal (ocupa 1x1):**
+```python
+self.main_grid.addWidget(boton_7, 3, 0)
+```
+
+### Estructura de la Cuadrícula de la Calculadora
+
+```
+Fila 0-1: [          Pantalla (4 columnas)          ]
+Fila 2:   [ CE (2 cols) ] [ <- ] [ + ]
+Fila 3:   [ 7 ] [ 8 ] [ 9 ] [ / ]
+Fila 4:   [ 4 ] [ 5 ] [ 6 ] [ * ]
+Fila 5:   [ 1 ] [ 2 ] [ 3 ] [ - ]
+Fila 6:   [ 0 ] [ 00 ] [ . ] [ = ]
+```
+
+### QTextEdit como Pantalla
+```python
+self.pantalla = QTextEdit(self)
+self.pantalla.setDisabled(True)
+```
+- **QTextEdit**: Widget de texto multilínea
+- **setDisabled(True)**: Hace que la pantalla sea de solo lectura
+- Alternativa: `QLineEdit` para una sola línea o `QLabel`
+
+### Métodos Útiles de QGridLayout
+
+#### Configurar Espaciado
+```python
+self.main_grid.setSpacing(5)  # Espacio entre celdas
+```
+
+#### Configurar Márgenes
+```python
+self.main_grid.setContentsMargins(10, 10, 10, 10)
+```
+
+#### Obtener Información de la Cuadrícula
+```python
+row_count = self.main_grid.rowCount()
+column_count = self.main_grid.columnCount()
+```
+
+### Ejemplo Mejorado con Configuraciones Adicionales
+```python
+def generar_interfaz(self):
+    # Configurar pantalla
+    self.pantalla = QTextEdit(self)
+    self.pantalla.setDisabled(True)
+    self.pantalla.setMaximumHeight(80)  # Limitar altura
+    
+    # Crear botones (código existente)
+    # ...
+    
+    self.main_grid = QGridLayout()
+    self.main_grid.setSpacing(5)  # Espacio entre botones
+    self.main_grid.setContentsMargins(15, 15, 15, 15)  # Márgenes
+    
+    # Agregar widgets (código existente)
+    # ...
+    
+    # Configurar tamaño de botones
+    botones = [boton_0, boton_1, boton_2, boton_3, boton_4, 
+               boton_5, boton_6, boton_7, boton_8, boton_9,
+               boton_00, boton_punto, boton_suma, boton_resta,
+               boton_multiplicacion, boton_division, boton_igual,
+               boton_clear, boton_borrar]
+    
+    for boton in botones:
+        boton.setFixedSize(60, 50)  # Tamaño uniforme para todos los botones
+    
+    self.setLayout(self.main_grid)
+```
+
+### Ventajas de QGridLayout
+
+1. **Precisión**: Control exacto de la posición de cada widget
+2. **Flexibilidad**: Widgets pueden ocupar múltiples celdas
+3. **Organización**: Ideal para interfaces con estructura de tabla
+4. **Escalabilidad**: Fácil agregar más filas/columnas
+
+### Casos de Uso Comunes para QGridLayout
+
+- Calculadoras
+- Teclados numéricos
+- Interfaces de tablero de instrumentos
+- Formularios complejos con etiquetas y campos alineados
+- Juegos de tablero
+
+### Comparación con Otros Layouts
+
+| Layout | Uso Ideal | Ventajas |
+|--------|-----------|----------|
+| **QGridLayout** | Interfaces tabulares | Máximo control de posición |
+| **QHBoxLayout** | Filas horizontales | Simple, orden lineal |
+| **QVBoxLayout** | Columnas verticales | Simple, orden vertical |
+| **Anidados** | Interfaces complejas | Combinación de estructuras |
