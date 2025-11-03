@@ -1324,3 +1324,330 @@ def generar_interfaz(self):
 | **QHBoxLayout** | Filas horizontales | Simple, orden lineal |
 | **QVBoxLayout** | Columnas verticales | Simple, orden vertical |
 | **Anidados** | Interfaces complejas | Combinación de estructuras |
+
+
+## 22. Calculadora Funcional - Lógica Completa
+
+### Código Completo de la Calculadora Funcional
+
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QTextEdit, QPushButton, QGridLayout, QMessageBox)
+import operator
+
+# Diccionario para mapear los operadores a las funciones correspondientes
+# Esto trabaja con strings para facilitar la selección del operador
+operation = {
+    '+': operator.add,
+    '-': operator.sub,
+    '*': operator.mul,
+    '/': operator.truediv
+}
+
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.primerValor = ""
+        self.segundoValor = ""
+        self.operacion = ""
+        self.pointer_flag = "1"
+        self.after_equal = False
+        self.after_operator = False
+
+    def inicializarUI(self):
+        self.setGeometry(100,100,600, 400)
+        self.setWindowTitle("Calculadora Simple")
+        self.generar_interfaz()
+        self.show()
+
+    def generar_interfaz(self):
+        self.pantalla = QTextEdit(self)
+        self.pantalla.setDisabled(True)
+        boton_1 = QPushButton("1")
+        boton_2 = QPushButton("2")
+        boton_3 = QPushButton("3")
+        boton_4 = QPushButton("4")
+        boton_5 = QPushButton("5")
+        boton_6 = QPushButton("6")
+        boton_7 = QPushButton("7")
+        boton_8 = QPushButton("8")
+        boton_9 = QPushButton("9")
+        boton_0 = QPushButton("0")
+        boton_00 = QPushButton("00")
+        boton_punto = QPushButton(".")
+
+        # Conectamos los botones numéricos a la función ingresar_datos
+        boton_1.clicked.connect(self.ingresar_datos)
+        boton_2.clicked.connect(self.ingresar_datos)
+        boton_3.clicked.connect(self.ingresar_datos)
+        boton_4.clicked.connect(self.ingresar_datos)
+        boton_5.clicked.connect(self.ingresar_datos)
+        boton_6.clicked.connect(self.ingresar_datos)
+        boton_7.clicked.connect(self.ingresar_datos)
+        boton_8.clicked.connect(self.ingresar_datos)
+        boton_9.clicked.connect(self.ingresar_datos)
+        boton_0.clicked.connect(self.ingresar_datos)
+        boton_00.clicked.connect(self.ingresar_datos)
+        boton_punto.clicked.connect(self.ingresar_datos)
+
+        boton_suma = QPushButton("+")
+        boton_resta = QPushButton("-")
+        boton_multiplicacion = QPushButton("*")
+        boton_division = QPushButton("/")
+        boton_igual = QPushButton("=")
+        boton_clear = QPushButton("CE")
+        boton_borrar = QPushButton("<-")
+
+        boton_suma.clicked.connect(self.ingresar_operador)
+        boton_resta.clicked.connect(self.ingresar_operador)
+        boton_multiplicacion.clicked.connect(self.ingresar_operador)
+        boton_division.clicked.connect(self.ingresar_operador)
+
+        boton_clear.clicked.connect(self.borrar_todo)
+        boton_borrar.clicked.connect(self.borrar_parcial)
+        boton_igual.clicked.connect(self.calcular_resultado)
+
+        self.main_grid = QGridLayout()
+        self.main_grid.addWidget(self.pantalla,0,0,2,4) # 0 fila, 0 columna, ocupa 2 filas y 4 columnas
+        self.main_grid.addWidget(boton_clear, 2,0, 1,2) # 2 fila, 0 columna, ocupa 1 fila y 2 columnas
+        self.main_grid.addWidget(boton_borrar,2,2) # 2 fila, 2 columna(ocupa 1 fila y 1 columna por defecto)
+        self.main_grid.addWidget(boton_suma,2,3) # 2 fila, 3 columna
+        self.main_grid.addWidget(boton_7,3,0) # 3 fila 0 columna
+        self.main_grid.addWidget(boton_8,3,1) # 3 fila 1 columna
+        self.main_grid.addWidget(boton_9,3,2) # 3 fila 2 columna
+        self.main_grid.addWidget(boton_division,3, 3) # 3 fila 3 columna
+        self.main_grid.addWidget(boton_4,4,0) # 4 fila 0 columna
+        self.main_grid.addWidget(boton_5,4,1) # 4 fila
+        self.main_grid.addWidget(boton_6,4,2) # 4 fila 2 columna
+        self.main_grid.addWidget(boton_multiplicacion,4,3) # 4 fila 3 columna
+        self.main_grid.addWidget(boton_1,5,0) # 5 fila 0 columna
+        self.main_grid.addWidget(boton_2,5,1) # 5 fila 1 columna
+        self.main_grid.addWidget(boton_3,5,2) # 5 fila 2 columna
+        self.main_grid.addWidget(boton_resta,5,3) # 5 fila 3 columna
+        self.main_grid.addWidget(boton_0,6,0) # 6 fila 0 columna
+        self.main_grid.addWidget(boton_00,6,1) # 6 fila 1 columna
+        self.main_grid.addWidget(boton_punto,6,2) # 6 fila 2 columna
+        self.main_grid.addWidget(boton_igual,6,3) # 6 fila 3 columna
+
+        self.setLayout(self.main_grid)
+
+    def ingresar_datos(self):
+        boton_text = self.sender().text()
+        if self.after_equal:
+            self.primerValor = ""
+            self.pantalla.setText(self.primerValor)
+            self.after_equal = False
+            self.pointer_flag = "1"
+        if self.pointer_flag == "1":
+            self.primerValor += boton_text
+            self.pantalla.setText(self.primerValor)
+        else:
+            self.segundoValor += boton_text
+            self.pantalla.setText(self.pantalla.toPlainText()+boton_text)
+
+    def ingresar_operador(self):
+        boton_text = self.sender().text()
+        self.operacion = boton_text
+        self.pointer_flag = "2"
+
+        if self.after_operator == True and self.segundoValor != "":
+            self.calcular_resultado()
+            self.pantalla.setText(self.primerValor + " "+self.sender().text()+"" + self.operacion + " ")
+        else:
+            self.pantalla.setText(self.pantalla.toPlainText() + " " + self.operacion + " ")
+
+        self.after_operator = True
+        self.after_equal = False
+
+    def borrar_todo(self):
+        self.primerValor = ""
+        self.segundoValor = ""
+        self.operacion = ""
+        self.pointer_flag = "1"
+        self.after_equal = False
+        self.after_operator = False
+        self.pantalla.setText("")
+
+    def borrar_parcial(self):
+        if self.after_equal:
+            self.borrar_todo()
+        if self.pointer_flag == "1":
+            self.primerValor = self.primerValor[:-1]
+            self.pantalla.setText(self.primerValor)
+        else:
+            self.segundoValor = self.segundoValor[:-1]
+            self.pantalla.setText(self.segundoValor)
+
+    def calcular_resultado(self):
+        resultado = str(operation[self.operacion](float(self.primerValor), float(self.segundoValor)))
+        self.pantalla.setText(resultado)
+        self.primerValor = resultado
+        self.segundoValor = ""
+        self.operacion = ""
+        self.after_equal = True
+        self.after_operator = False
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    ventana = MainWindow()
+    sys.exit(app.exec())
+```
+
+### Explicación de la Lógica de la Calculadora
+
+#### Variables de Estado
+```python
+self.primerValor = ""        # Primer número de la operación
+self.segundoValor = ""       # Segundo número de la operación  
+self.operacion = ""          # Operador actual (+, -, *, /)
+self.pointer_flag = "1"      # Indica si estamos en el primer o segundo valor
+self.after_equal = False     # Indica si acabamos de presionar "="
+self.after_operator = False  # Indica si acabamos de presionar un operador
+```
+
+#### Uso del Módulo Operator
+```python
+import operator
+
+operation = {
+    '+': operator.add,
+    '-': operator.sub,
+    '*': operator.mul,
+    '/': operator.truediv
+}
+```
+- **operator**: Módulo de Python que proporciona funciones para operadores aritméticos
+- **operation**: Diccionario que mapea símbolos de operadores a funciones
+
+#### Función `ingresar_datos`
+```python
+def ingresar_datos(self):
+    boton_text = self.sender().text()
+    if self.after_equal:
+        self.primerValor = ""
+        self.pantalla.setText(self.primerValor)
+        self.after_equal = False
+        self.pointer_flag = "1"
+    if self.pointer_flag == "1":
+        self.primerValor += boton_text
+        self.pantalla.setText(self.primerValor)
+    else:
+        self.segundoValor += boton_text
+        self.pantalla.setText(self.pantalla.toPlainText()+boton_text)
+```
+
+**Flujo:**
+1. Obtiene el texto del botón presionado con `self.sender().text()`
+2. Si se acaba de presionar "=", reinicia el estado
+3. Dependiendo de `pointer_flag`, concatena al primer o segundo valor
+4. Actualiza la pantalla
+
+#### Función `ingresar_operador`
+```python
+def ingresar_operador(self):
+    boton_text = self.sender().text()
+    self.operacion = boton_text
+    self.pointer_flag = "2"
+
+    if self.after_operator == True and self.segundoValor != "":
+        self.calcular_resultado()
+        self.pantalla.setText(self.primerValor + " "+self.sender().text()+"" + self.operacion + " ")
+    else:
+        self.pantalla.setText(self.pantalla.toPlainText() + " " + self.operacion + " ")
+
+    self.after_operator = True
+    self.after_equal = False
+```
+
+**Funcionamiento:**
+- Cambia `pointer_flag` a "2" para comenzar a recibir el segundo valor
+- Si ya hay una operación en curso, calcula el resultado primero
+- Actualiza la pantalla con el operador
+
+#### Función `borrar_todo` (CE)
+```python
+def borrar_todo(self):
+    self.primerValor = ""
+    self.segundoValor = ""
+    self.operacion = ""
+    self.pointer_flag = "1"
+    self.after_equal = False
+    self.after_operator = False
+    self.pantalla.setText("")
+```
+Reinicia completamente el estado de la calculadora.
+
+#### Función `borrar_parcial` (<-)
+```python
+def borrar_parcial(self):
+    if self.after_equal:
+        self.borrar_todo()
+    if self.pointer_flag == "1":
+        self.primerValor = self.primerValor[:-1]
+        self.pantalla.setText(self.primerValor)
+    else:
+        self.segundoValor = self.segundoValor[:-1]
+        self.pantalla.setText(self.segundoValor)
+```
+Elimina el último carácter del valor actual.
+
+#### Función `calcular_resultado` (=)
+```python
+def calcular_resultado(self):
+    resultado = str(operation[self.operacion](float(self.primerValor), float(self.segundoValor)))
+    self.pantalla.setText(resultado)
+    self.primerValor = resultado
+    self.segundoValor = ""
+    self.operacion = ""
+    self.after_equal = True
+    self.after_operator = False
+```
+
+**Proceso:**
+1. Usa el diccionario `operation` para obtener la función del operador
+2. Convierte los valores a float y realiza la operación
+3. Muestra el resultado
+4. Guarda el resultado en `primerValor` para operaciones consecutivas
+5. Actualiza las banderas de estado
+
+### Conexión de Señales
+
+#### Botones Numéricos
+```python
+boton_1.clicked.connect(self.ingresar_datos)
+boton_2.clicked.connect(self.ingresar_datos)
+# ... todos los botones numéricos
+```
+
+#### Botones de Operación
+```python
+boton_suma.clicked.connect(self.ingresar_operador)
+boton_resta.clicked.connect(self.ingresar_operador)
+# ... todos los operadores
+```
+
+#### Botones de Control
+```python
+boton_clear.clicked.connect(self.borrar_todo)
+boton_borrar.clicked.connect(self.borrar_parcial)
+boton_igual.clicked.connect(self.calcular_resultado)
+```
+
+### Flujo de una Operación Completa
+
+**Ejemplo: 5 + 3 =**
+
+1. **Presionar "5"**: `primerValor = "5"`, pantalla muestra "5"
+2. **Presionar "+"**: `operacion = "+"`, `pointer_flag = "2"`, pantalla muestra "5 +"
+3. **Presionar "3"**: `segundoValor = "3"`, pantalla muestra "5 + 3"
+4. **Presionar "="**: Calcula 5+3=8, pantalla muestra "8", `primerValor = "8"`
+
+### Mejoras Potenciales
+
+1. **Manejo de errores**: División por cero, números muy grandes
+2. **Validación de entrada**: Evitar múltiples puntos decimales
+3. **Operaciones con decimales**: Mejor manejo de números flotantes
+4. **Historial**: Mostrar la operación completa
+5. **Teclado**: Soporte para entrada por teclado
+
