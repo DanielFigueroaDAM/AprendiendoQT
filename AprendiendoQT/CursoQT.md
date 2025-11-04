@@ -1651,3 +1651,259 @@ boton_igual.clicked.connect(self.calcular_resultado)
 4. **Historial**: Mostrar la operación completa
 5. **Teclado**: Soporte para entrada por teclado
 
+## 23. QFormLayout - Diseño Especializado para Formularios
+
+### Código del Formulario con QFormLayout
+```python
+import sys
+
+from PyQt6.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit, QPushButton, QMessageBox, QFormLayout, QHBoxLayout, QDateEdit, QComboBox)
+
+from PyQt6.QtCore import Qt, QDate
+from PyQt6.QtGui import QFont
+
+class MainWindow(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+
+    def inicializarUI(self):
+        self.setGeometry(100,100,200,600)
+        self.setWindowTitle("FormLayout")
+        self.crearFormulario()
+        self.show()
+
+    def crearFormulario(self):
+        titulo = QLabel("Solicitud de ingreso")
+        titulo.setFont(QFont('Arial',18))
+        titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.nombreEdit = QLineEdit()
+        self.nombreEdit.setPlaceholderText("Nombre")
+
+        self.apellidoEdit = QLineEdit()
+        self.apellidoEdit.setPlaceholderText("Apellido")
+
+        self.genero_selection = QComboBox()
+        self.genero_selection.addItems(["Masculino", "Femenino", "Otro"])
+
+        self.fechaNacimiento = QDateEdit()
+        self.fechaNacimiento.setDisplayFormat("yyyy-MM-dd")
+        self.fechaNacimiento.setMaximumDate(QDate.currentDate())
+        self.fechaNacimiento.setCalendarPopup(True)
+        self.fechaNacimiento.setDate(QDate.currentDate())
+
+        self.telefono = QLineEdit()
+        self.telefono.setPlaceholderText("000-000-000")
+
+        submit_button = QPushButton("Enviar")
+        submit_button.clicked.connect(self.mostrar_info)
+
+
+        primer_h_box = QHBoxLayout()
+        primer_h_box.addWidget(self.nombreEdit)
+        primer_h_box.addWidget(self.apellidoEdit)
+
+        main_form = QFormLayout()
+        main_form.addRow(titulo)
+        main_form.addRow("Nombre y Apellido: ", primer_h_box)
+        main_form.addRow("Género: ", self.genero_selection)
+        main_form.addRow("Fecha de Nacimiento: ", self.fechaNacimiento)
+        main_form.addRow("Teléfono: ", self.telefono)
+        main_form.addRow(submit_button)
+
+        self.setLayout(main_form)
+
+
+    def mostrar_info(self):
+        QMessageBox.information(self,
+                                "Información",
+                                f"Nombre: {self.nombreEdit.text()}\n"
+                                f"Apellido: {self.apellidoEdit.text()}\n"
+                                f"Género: {self.genero_selection.currentText()}\n"
+                                f"Fecha de Nacimiento: {self.fechaNacimiento.date().toString()}\n",
+                                QMessageBox.StandardButton.Ok,
+                                QMessageBox.StandardButton.Ok
+                             )
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    ventana = MainWindow()
+    sys.exit(app.exec())
+```
+
+### Explicación del Código
+
+#### QFormLayout - Layout Especializado para Formularios
+```python
+main_form = QFormLayout()
+```
+- **QFormLayout**: Diseñado específicamente para formularios con etiquetas y campos
+- Organiza automáticamente las etiquetas y los campos de entrada
+- Ideal para formularios de registro, configuración, etc.
+
+#### Estructura del QFormLayout
+```
+[Etiqueta] [Campo/Widget]
+[Etiqueta] [Campo/Widget]
+...
+```
+
+#### Agregar Filas al FormLayout
+```python
+main_form.addRow(titulo)  # Fila con un solo widget
+main_form.addRow("Nombre y Apellido: ", primer_h_box)  # Fila con etiqueta y layout
+main_form.addRow("Género: ", self.genero_selection)  # Fila con etiqueta y widget
+```
+
+### Nuevos Widgets Introducidos
+
+#### QComboBox - Lista Desplegable
+```python
+self.genero_selection = QComboBox()
+self.genero_selection.addItems(["Masculino", "Femenino", "Otro"])
+```
+- **QComboBox**: Widget de selección desplegable
+- **addItems()**: Añade múltiples opciones a la lista
+
+#### QDateEdit - Selector de Fecha
+```python
+self.fechaNacimiento = QDateEdit()
+self.fechaNacimiento.setDisplayFormat("yyyy-MM-dd")
+self.fechaNacimiento.setMaximumDate(QDate.currentDate())
+self.fechaNacimiento.setCalendarPopup(True)
+self.fechaNacimiento.setDate(QDate.currentDate())
+```
+
+**Configuraciones:**
+- **setDisplayFormat()**: Formato de visualización de la fecha
+- **setMaximumDate()**: Fecha máxima permitida
+- **setCalendarPopup(True)**: Muestra un calendario desplegable
+- **setDate()**: Fecha inicial
+
+#### Placeholder Text
+```python
+self.nombreEdit.setPlaceholderText("Nombre")
+```
+- **setPlaceholderText()**: Texto de ejemplo que desaparece al escribir
+
+### Configuraciones de Texto y Fuente
+
+#### QFont - Configuración de Fuente
+```python
+titulo.setFont(QFont('Arial',18))
+```
+- **QFont**: Clase para configurar fuentes tipográficas
+- Parámetros: familia de fuente y tamaño
+
+#### Alineación de Texto
+```python
+titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+```
+- **AlignmentFlag.AlignCenter**: Centra el texto horizontalmente
+
+### Combinación de Layouts
+
+#### QHBoxLayout dentro de QFormLayout
+```python
+primer_h_box = QHBoxLayout()
+primer_h_box.addWidget(self.nombreEdit)
+primer_h_box.addWidget(self.apellidoEdit)
+
+main_form.addRow("Nombre y Apellido: ", primer_h_box)
+```
+- Se puede incluir cualquier layout dentro de una fila de QFormLayout
+- Útil para agrupar múltiples widgets en una misma fila
+
+### Métodos Útiles de QFormLayout
+
+#### Agregar Diferentes Tipos de Filas
+```python
+# Fila con etiqueta de texto y widget
+main_form.addRow("Etiqueta:", widget)
+
+# Fila con QLabel y widget
+main_form.addRow(QLabel("Etiqueta"), widget)
+
+# Fila con solo un widget (ocupa ambas columnas)
+main_form.addRow(widget)
+
+# Fila con layout
+main_form.addRow("Etiqueta:", layout)
+```
+
+#### Configurar Espaciado y Márgenes
+```python
+main_form.setSpacing(10)  # Espacio entre filas
+main_form.setContentsMargins(20, 20, 20, 20)  # Márgenes
+```
+
+#### Configurar Alineación de Etiquetas
+```python
+main_form.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
+```
+
+### Función de Mostrar Información
+```python
+def mostrar_info(self):
+    QMessageBox.information(self,
+                            "Información",
+                            f"Nombre: {self.nombreEdit.text()}\n"
+                            f"Apellido: {self.apellidoEdit.text()}\n"
+                            f"Género: {self.genero_selection.currentText()}\n"
+                            f"Fecha de Nacimiento: {self.fechaNacimiento.date().toString()}\n",
+                            QMessageBox.StandardButton.Ok,
+                            QMessageBox.StandardButton.Ok
+                         )
+```
+
+**Métodos utilizados:**
+- **text()**: Obtiene el texto de QLineEdit
+- **currentText()**: Obtiene el texto seleccionado en QComboBox
+- **date().toString()**: Convierte QDate a string
+
+### Ventajas de QFormLayout
+
+1. **Organización automática**: Alinea perfectamente etiquetas y campos
+2. **Código más limpio**: Menos código para lograr el mismo resultado
+3. **Consistencia visual**: Todas las etiquetas tienen el mismo ancho y alineación
+4. **Adaptabilidad**: Se ajusta automáticamente al contenido
+
+### Ejemplo Mejorado con Validación
+```python
+def crearFormulario(self):
+    # ... (código anterior)
+    
+    submit_button.clicked.connect(self.validar_y_mostrar)
+    # ...
+
+def validar_y_mostrar(self):
+    # Validar campos obligatorios
+    if not self.nombreEdit.text().strip() or not self.apellidoEdit.text().strip():
+        QMessageBox.warning(self, "Error", "Nombre y Apellido son obligatorios")
+        return
+    
+    # Validar teléfono (solo números)
+    if not self.telefono.text().replace("-", "").isdigit():
+        QMessageBox.warning(self, "Error", "El teléfono debe contener solo números")
+        return
+    
+    self.mostrar_info()
+```
+
+### Casos de Uso Ideales para QFormLayout
+
+- Formularios de registro de usuarios
+- Configuraciones de aplicación
+- Paneles de administración
+- Diálogos de preferencias
+- Formularios de contacto
+
+### Comparación con Otros Layouts para Formularios
+
+| Layout | Ventajas para Formularios |
+|--------|---------------------------|
+| **QFormLayout** | Automático, etiquetas alineadas, menos código |
+| **QGridLayout** | Control total, posiciones exactas |
+| **QVBoxLayout** | Simple pero requiere más configuración manual |
