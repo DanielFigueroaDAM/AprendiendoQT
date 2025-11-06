@@ -1,3 +1,171 @@
+# Índice Detallado del Curso PyQt6
+
+## 📚 **FUNDAMENTOS BÁSICOS**
+
+### 1. **Configuración Inicial y Ventana Básica**
+- **📍 Sección**: 1. Creación de una Ventana Básica
+- **Temas**:
+  - Estructura básica de una aplicación PyQt6
+  - Importación de módulos (sys, QApplication, QWidget)
+  - Método `__init__` y herencia de QWidget
+  - Configuración de ventana: `setGeometry()`, `setWindowTitle()`, `show()`
+  - Bloque principal de ejecución
+
+### 2. **Widgets Básicos de Formulario**
+- **📍 Sección**: 2-3. Formulario de Login y Elementos Explicados
+- **Widgets cubiertos**:
+  - **QLabel**: Etiquetas de texto con fuentes personalizadas
+  - **QLineEdit**: Campos de entrada (modos: Normal, Password, NoEcho)
+  - **QPushButton**: Botones con conexión de señales
+  - **QCheckBox**: Casillas de verificación
+
+## 🎨 **SISTEMAS DE DISEÑO Y LAYOUTS**
+
+### 3. **Posicionamiento Absoluto**
+- **📍 Sección**: 5. Diseño y Posicionamiento
+- **Métodos**: `move()`, `resize()`, `setGeometry()`
+- **Uso**: Para interfaces simples con posiciones fijas
+
+### 4. **Layouts Automáticos**
+- **📍 Sección**: 18-23. Diferentes tipos de Layouts
+- **Tipos**:
+  - **QHBoxLayout** (Sección 18): Disposición horizontal
+  - **QVBoxLayout** (Sección 19): Disposición vertical
+  - **QGridLayout** (Sección 21): Cuadrícula para interfaces complejas
+  - **QFormLayout** (Sección 22): Especializado para formularios
+
+### 5. **Layouts Anidados**
+- **📍 Sección**: 20. Layouts Anidados
+- **Concepto**: Combinar múltiples layouts para diseños complejos
+- **Métodos**: `addLayout()`, organización jerárquica
+
+## 🔧 **WIDGETS ESPECIALIZADOS**
+
+### 6. **Widgets de Selección**
+- **📍 Sección**: 23. Widgets de Selección
+- **Tipos**:
+  - **QRadioButton**: Selección única (opciones excluyentes)
+  - **QCheckBox**: Selección múltiple
+  - **QComboBox**: Listas desplegables
+  - **QSpinBox**: Selectores numéricos
+
+### 7. **Widgets de Fecha y Texto Avanzados**
+- **📍 Sección**: 22. QFormLayout
+- **Widgets**:
+  - **QDateEdit**: Selector de fechas con calendario
+  - **QTextEdit**: Área de texto multilínea
+
+## 💾 **MANEJO DE DATOS Y PERSISTENCIA**
+
+### 8. **Sistema de Archivos**
+- **📍 Sección**: 8. Persistencia de Datos con Archivos
+- **Temas**:
+  - Lectura/escritura de archivos de texto
+  - Modos de apertura ("a+", "r")
+  - Manejo de excepciones (FileNotFoundError)
+
+### 9. **Validación de Datos**
+- **📍 Sección**: 4. Implementando las Funciones
+- **Técnicas**:
+  - Validación de campos vacíos
+  - Verificación de credenciales
+  - Mensajes de error personalizados
+
+## 🔄 **INTERACCIÓN Y SEÑALES**
+
+### 10. **Manejo de Eventos**
+- **📍 Sección**: 19. Manejo de Señales
+- **Conceptos clave**:
+  - **sender()**: Identificar el widget que emitió la señal
+  - **clicked vs toggled**: Diferencia en señales de checkboxes
+  - Conexión múltiple a una misma función
+
+### 11. **Comunicación entre Ventanas**
+- **📍 Sección**: 9. Integración entre Ventanas
+- **Patrones**:
+  - Ventanas modales vs no modales
+  - Apertura y cierre de ventanas
+  - Paso de datos entre ventanas
+
+## 🚀 **PROYECTOS COMPLETOS**
+
+### 12. **Sistema de Login Completo**
+- **📍 Sección**: 12-16. Implementación Completa del Sistema
+- **Componentes**:
+  - Autenticación con archivo de usuarios
+  - Navegación entre ventanas (Login → Principal)
+  - Manejo de errores robusto
+
+### 13. **Calculadora Funcional**
+- **📍 Sección**: 21-22. Calculadora
+- **Características**:
+  - Interfaz con QGridLayout
+  - Lógica de operaciones matemáticas
+  - Manejo de estado y memoria
+
+## 🛠 **BUENAS PRÁCTICAS Y TÉCNICAS AVANZADAS**
+
+### 14. **Manejo de Errores**
+- **📍 Sección**: 13-16. Manejo de Errores Mejorado
+- **Estrategias**:
+  - Excepciones específicas vs genéricas
+  - Mensajes de error informativos
+  - Validación proactiva
+
+### 15. **Organización de Código**
+- **📍 Sección**: 23. Organización Modular
+- **Patrones**:
+  - Separación en métodos especializados
+  - Layouts organizados por funcionalidad
+  - Nomenclatura consistente
+
+## 📋 **BÚSQUEDA RÁPIDA POR WIDGET**
+
+### **Widgets Básicos**
+- **QLabel**: Secciones 2, 3, 20, 22
+- **QLineEdit**: Secciones 2, 3, 18, 20, 22, 23
+- **QPushButton**: Secciones 2, 3, 18, 19, 20, 21, 22
+
+### **Widgets de Selección**
+- **QCheckBox**: Secciones 2, 3, 23
+- **QRadioButton**: Sección 23
+- **QComboBox**: Secciones 22, 23
+- **QSpinBox**: Sección 23
+
+### **Widgets Especializados**
+- **QDateEdit**: Sección 22
+- **QTextEdit**: Secciones 21, 23
+
+### **Layouts**
+- **QHBoxLayout**: Secciones 18, 20, 22, 23
+- **QVBoxLayout**: Secciones 19, 20, 23
+- **QGridLayout**: Sección 21
+- **QFormLayout**: Sección 22
+
+## 🔍 **BÚSQUEDA POR FUNCIONALIDAD**
+
+### **Para crear formularios**:
+- Básicos: Secciones 2-5
+- Avanzados: Secciones 20, 22
+- Con validación: Secciones 4, 8, 12
+
+### **Para diseño de interfaces**:
+- Layouts simples: Secciones 18-19
+- Interfaces complejas: Secciones 20-21
+- Formularios profesionales: Sección 22
+
+### **Para manejo de datos**:
+- Persistencia: Sección 8
+- Validación: Secciones 4, 12
+- Estado de aplicación: Secciones 12, 21
+
+### **Para interacción de usuario**:
+- Señales y eventos: Secciones 3, 19
+- Navegación: Sección 9
+- Feedback: Secciones 4, 10
+
+
+
 # Guía de PyQt6 - Creación de Interfaces Gráficas
 
 ## 1. Creación de una Ventana Básica
@@ -1907,3 +2075,302 @@ def validar_y_mostrar(self):
 | **QFormLayout** | Automático, etiquetas alineadas, menos código |
 | **QGridLayout** | Control total, posiciones exactas |
 | **QVBoxLayout** | Simple pero requiere más configuración manual |
+
+# Guía de PyQt6 - Continuación
+
+## 23. Widgets de Selección y Layouts Anidados Avanzados
+
+### Código de la Aplicación con Múltiples Widgets
+```python
+import sys
+
+from PyQt6.QtWidgets import (QApplication, QLabel, QWidget, QLineEdit, QPushButton, QCheckBox, QRadioButton,
+                             QVBoxLayout, QComboBox, QSpinBox, QHBoxLayout, QTextEdit)
+
+class Limitador(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+
+        self.show()
+
+    def inicializarUI(self):
+
+        self.cajaVerticalRadioButton()
+
+        self.cajaVerticalCheckButton()
+
+        self.cajaVerticalImputs()
+
+        self.cajaHorizontal = QHBoxLayout()
+
+        self.cajaHorizontal.addLayout(self.verticalCaja1)
+        self.cajaHorizontal.addLayout(self.verticalCaja2)
+        self.cajaHorizontal.addLayout(self.cajaImputs)
+
+
+        self.texto = QTextEdit()
+        self.texto.setPlaceholderText("Original")
+        self.texto.setReadOnly(True)
+        self.texto.setFixedHeight(35)
+        self.cajaV = QVBoxLayout()
+
+        self.cajaV.addWidget(self.texto)
+        self.cajaV.addLayout(self.cajaHorizontal)
+
+
+        self.setLayout(self.cajaV)
+
+
+
+    def cajaVerticalImputs(self):
+        self.inputText = QLineEdit()
+        self.desplegable = QComboBox()
+        self.inputNumber = QSpinBox()
+
+        self.desplegable.addItems(["Item 1", "Item 2", "Item 3"])
+
+        self.cajaImputs = QVBoxLayout()
+
+        self.cajaImputs.addWidget(self.inputText)
+        self.cajaImputs.addWidget(self.desplegable)
+        self.cajaImputs.addWidget(self.inputNumber)
+
+
+    def cajaVerticalCheckButton(self):
+        self.cuadroCheck1 = QCheckBox("Opcion 4")
+        self.cuadroCheck2 = QCheckBox("Opcion 5")
+        self.cuadroCheck3 = QCheckBox("Opcion 6")
+
+        self.verticalCaja2 = QVBoxLayout()
+
+        self.verticalCaja2.addWidget(self.cuadroCheck1)
+        self.verticalCaja2.addWidget(self.cuadroCheck2)
+        self.verticalCaja2.addWidget(self.cuadroCheck3)
+
+
+
+    def cajaVerticalRadioButton(self):
+        self.boton1 = QRadioButton("Opcion 1")
+        self.boton2 = QRadioButton("Opcion 2")
+        self.boton3 = QRadioButton("Opcion 3")
+
+        self.verticalCaja1 = QVBoxLayout()
+        self.verticalCaja1.addWidget(self.boton1)
+        self.verticalCaja1.addWidget(self.boton2)
+        self.verticalCaja1.addWidget(self.boton3)
+
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    login = Limitador()
+    sys.exit(app.exec())
+```
+
+### Explicación del Código
+
+#### Estructura de Layouts Anidados
+```
+QVBoxLayout (principal)
+├── QTextEdit (área de texto)
+└── QHBoxLayout (horizontal)
+    ├── QVBoxLayout (radio buttons)
+    ├── QVBoxLayout (check boxes)
+    └── QVBoxLayout (campos de entrada)
+```
+
+### Nuevos Widgets de Selección
+
+#### QRadioButton - Botones de Opción Única
+```python
+self.boton1 = QRadioButton("Opcion 1")
+self.boton2 = QRadioButton("Opcion 2")
+self.boton3 = QRadioButton("Opcion 3")
+```
+- **QRadioButton**: Permite seleccionar una sola opción de un grupo
+- Solo un RadioButton puede estar seleccionado a la vez dentro del mismo grupo padre
+
+#### QCheckBox - Casillas de Verificación Múltiples
+```python
+self.cuadroCheck1 = QCheckBox("Opcion 4")
+self.cuadroCheck2 = QCheckBox("Opcion 5")
+self.cuadroCheck3 = QCheckBox("Opcion 6")
+```
+- **QCheckBox**: Permite seleccionar múltiples opciones independientemente
+- Cada casilla puede estar activada o desactivada sin afectar a las demás
+
+#### QSpinBox - Selector Numérico
+```python
+self.inputNumber = QSpinBox()
+```
+- **QSpinBox**: Widget para seleccionar valores numéricos
+- Permite incrementar/decrementar el valor con flechas o escribiendo
+
+#### QComboBox - Lista Desplegable
+```python
+self.desplegable = QComboBox()
+self.desplegable.addItems(["Item 1", "Item 2", "Item 3"])
+```
+- **QComboBox**: Lista desplegable de opciones
+- **addItems()**: Añade múltiples elementos a la lista
+
+### Configuraciones Específicas de Widgets
+
+#### QTextEdit Configurado como Solo Lectura
+```python
+self.texto = QTextEdit()
+self.texto.setPlaceholderText("Original")
+self.texto.setReadOnly(True)
+self.texto.setFixedHeight(35)
+```
+- **setReadOnly(True)**: Impide que el usuario edite el texto
+- **setFixedHeight()**: Establece una altura fija
+- **setPlaceholderText()**: Texto que aparece cuando está vacío
+
+### Organización Modular del Código
+
+#### Ventajas de Separar en Métodos
+```python
+def cajaVerticalRadioButton(self):
+def cajaVerticalCheckButton(self):
+def cajaVerticalImputs(self):
+```
+- **Mantenibilidad**: Cada sección es independiente y fácil de modificar
+- **Reutilización**: Los métodos pueden ser llamados múltiples veces
+- **Legibilidad**: Código más organizado y fácil de entender
+
+### Métodos Útiles para los Widgets
+
+#### Para QRadioButton
+```python
+# Verificar si está seleccionado
+if self.boton1.isChecked():
+    print("Opción 1 seleccionada")
+
+# Seleccionar programáticamente
+self.boton1.setChecked(True)
+
+# Conectar a una función cuando cambie el estado
+self.boton1.toggled.connect(self.radio_cambiado)
+```
+
+#### Para QCheckBox
+```python
+# Verificar estado
+if self.cuadroCheck1.isChecked():
+    print("Checkbox 1 activado")
+
+# Cambiar estado programáticamente
+self.cuadroCheck1.setChecked(True)
+
+# Conectar cuando cambie el estado
+self.cuadroCheck1.stateChanged.connect(self.checkbox_cambiado)
+```
+
+#### Para QSpinBox
+```python
+# Configurar rango de valores
+self.inputNumber.setRange(0, 100)  # Mínimo 0, máximo 100
+
+# Configurar paso de incremento
+self.inputNumber.setSingleStep(5)  # Incrementa de 5 en 5
+
+# Obtener valor actual
+valor = self.inputNumber.value()
+
+# Conectar cuando cambie el valor
+self.inputNumber.valueChanged.connect(self.numero_cambiado)
+```
+
+#### Para QComboBox
+```python
+# Obtener texto seleccionado
+seleccion = self.desplegable.currentText()
+
+# Obtener índice seleccionado
+indice = self.desplegable.currentIndex()
+
+# Agregar un item individual
+self.desplegable.addItem("Nuevo Item")
+
+# Conectar cuando cambie la selección
+self.desplegable.currentTextChanged.connect(self.combo_cambiado)
+```
+
+### Ejemplo Mejorado con Funcionalidades
+
+```python
+def inicializarUI(self):
+    # ... código existente ...
+    
+    # Conectar señales
+    self.conectar_señales()
+    
+    # ... resto del código ...
+
+def conectar_señales(self):
+    # Conectar radio buttons
+    self.boton1.toggled.connect(self.actualizar_texto)
+    self.boton2.toggled.connect(self.actualizar_texto)
+    self.boton3.toggled.connect(self.actualizar_texto)
+    
+    # Conectar check boxes
+    self.cuadroCheck1.stateChanged.connect(self.actualizar_texto)
+    self.cuadroCheck2.stateChanged.connect(self.actualizar_texto)
+    self.cuadroCheck3.stateChanged.connect(self.actualizar_texto)
+    
+    # Conectar otros widgets
+    self.inputText.textChanged.connect(self.actualizar_texto)
+    self.desplegable.currentTextChanged.connect(self.actualizar_texto)
+    self.inputNumber.valueChanged.connect(self.actualizar_texto)
+
+def actualizar_texto(self):
+    # Recopilar información de todos los widgets
+    radio_seleccionado = ""
+    if self.boton1.isChecked():
+        radio_seleccionado = "Opción 1"
+    elif self.boton2.isChecked():
+        radio_seleccionado = "Opción 2"
+    elif self.boton3.isChecked():
+        radio_seleccionado = "Opción 3"
+    
+    checks_seleccionados = []
+    if self.cuadroCheck1.isChecked():
+        checks_seleccionados.append("Opción 4")
+    if self.cuadroCheck2.isChecked():
+        checks_seleccionados.append("Opción 5")
+    if self.cuadroCheck3.isChecked():
+        checks_seleccionados.append("Opción 6")
+    
+    texto = f"Radio: {radio_seleccionado}\n"
+    texto += f"Checks: {', '.join(checks_seleccionados) if checks_seleccionados else 'Ninguno'}\n"
+    texto += f"Texto: {self.inputText.text()}\n"
+    texto += f"Combo: {self.desplegable.currentText()}\n"
+    texto += f"Número: {self.inputNumber.value()}"
+    
+    self.texto.setPlainText(texto)
+```
+
+### Diferencias Entre RadioButton y CheckBox
+
+| Característica | QRadioButton | QCheckBox |
+|----------------|--------------|-----------|
+| **Selección** | Única | Múltiple |
+| **Grupo** | Excluyente | Independiente |
+| **Uso** | Opciones mutuamente excluyentes | Opciones que pueden combinarse |
+| **Estado** | Solo uno activo | Cualquier combinación |
+
+### Consejos para el Diseño de Interfaces
+
+1. **Agrupar lógicamente**: Radio buttons para opciones excluyentes, checkboxes para opciones múltiples
+2. **Usar labels descriptivos**: Los textos deben ser claros y concisos
+3. **Organizar visualmente**: Agrupar elementos relacionados
+4. **Proporcionar feedback**: Mostrar cómo afectan las selecciones
+
+### Casos de Uso Típicos
+
+- **QRadioButton**: Selección de género, tipo de usuario, categoría única
+- **QCheckBox**: Selección de intereses, características, permisos
+- **QSpinBox**: Edad, cantidad, valores numéricos discretos
+- **QComboBox**: Selección de país, categoría, opciones predefinidas
