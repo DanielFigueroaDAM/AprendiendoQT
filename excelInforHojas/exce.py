@@ -47,6 +47,9 @@ class PanelExcelINFO(QMainWindow):
         botonesLayout.addWidget(self.botonOcultar)
         botonesLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        # --- Ajustes de padding y espacio ---
+        botonesLayout.setContentsMargins(20, 0, 20, 40)  # (izquierda, arriba, derecha, abajo)
+        botonesLayout.setSpacing(25)  # espacio entre los botones
 
 
         # Widget contenedor para los botones
@@ -54,7 +57,7 @@ class PanelExcelINFO(QMainWindow):
         botonesWidget.setLayout(botonesLayout)
 
         # Añadimos ese contenedor al grid en la columna central
-        myGrid.addWidget(botonesWidget, 1, 1, alignment=Qt.AlignmentFlag.AlignCenter)
+        myGrid.addWidget(botonesWidget, 1, 1, alignment=Qt.AlignmentFlag.AlignTop)
 
 
         # --- Botón Cerrar (abajo derecha) ---
