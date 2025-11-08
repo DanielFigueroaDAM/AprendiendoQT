@@ -23,6 +23,8 @@ if __name__ == '__main__':
     sys.exit(app.exec())
 ```
 
+![img.png](img.png)
+
 ### Explicación del Código
 
 #### Importaciones Necesarias
@@ -153,6 +155,8 @@ if __name__ == '__main__':
     login = Login()
     sys.exit(app.exec())
 ```
+
+![img_1.png](img_1.png)
 
 ## 3. Elementos de Formulario Explicados
 
@@ -618,6 +622,9 @@ if __name__ == "__main__":
     sys.exit(app.exec())
 ```
 
+![img_2.png](img_2.png)
+
+
 ### Explicación del Código
 
 #### Importación de QHBoxLayout
@@ -774,6 +781,8 @@ if __name__ == "__main__":
     ventana = MainWindow()
     sys.exit(app.exec())
 ```
+
+![img_3.png](img_3.png)
 
 ### Explicación del Código
 
@@ -988,6 +997,8 @@ if __name__ == "__main__":
     sys.exit(app.exec())
 ```
 
+![img_4.png](img_4.png)
+
 ### Explicación del Código
 
 #### Concepto de Layouts Anidados
@@ -1189,7 +1200,7 @@ if __name__ == "__main__":
     ventana = MainWindow()
     sys.exit(app.exec())
 ```
-
+![img_5.png](img_5.png)
 ### Explicación del Código
 
 #### QGridLayout - Layout de Cuadrícula
@@ -1733,6 +1744,8 @@ if __name__ == "__main__":
     sys.exit(app.exec())
 ```
 
+![img_6.png](img_6.png)
+
 ### Explicación del Código
 
 #### QFormLayout - Layout Especializado para Formularios
@@ -1987,6 +2000,9 @@ if __name__ == '__main__':
     ventana = ventanaBotones()
     sys.exit(app.exec())
 ```
+
+![img_7.png](img_7.png)
+
 
 ### Explicación del Código
 
