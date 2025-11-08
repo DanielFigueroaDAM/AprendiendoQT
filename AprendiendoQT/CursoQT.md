@@ -1907,3 +1907,309 @@ def validar_y_mostrar(self):
 | **QFormLayout** | Automático, etiquetas alineadas, menos código |
 | **QGridLayout** | Control total, posiciones exactas |
 | **QVBoxLayout** | Simple pero requiere más configuración manual |
+
+# Guía de PyQt6 - Continuación
+
+## 24. QGroupBox y Botones con Estado (Toggle Buttons)
+
+### Código de Ejemplo con QGroupBox y Toggle Buttons
+```python
+import sys
+from PyQt6.QtWidgets import QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QApplication, QGroupBox
+
+class ventanaBotones(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        # Botones normales (Push Buttons)
+        self.bMortadelo = QPushButton("Mortadelo")
+        self.bFilemon = QPushButton("Filemon")
+        self.bCarpanta = QPushButton("Carpanta")
+        self.bRompetechos = QPushButton("Rompetechos")
+        self.bPepeGotera = QPushButton("Pepe Gotera")
+        self.bOtilio = QPushButton("Otilio")
+
+        self.cajaHorizontal1 = QHBoxLayout()
+        self.cajaHorizontal1.addWidget(self.bMortadelo)
+        self.cajaHorizontal1.addWidget(self.bFilemon)
+        self.cajaHorizontal1.addWidget(self.bCarpanta)
+        self.cajaHorizontal1.addWidget(self.bRompetechos)
+        self.cajaHorizontal1.addWidget(self.bPepeGotera)
+        self.cajaHorizontal1.addWidget(self.bOtilio)
+
+        self.group = QGroupBox("Push Buttons")
+        self.group.setLayout(self.cajaHorizontal1)
+
+        # Botones con estado (Toggle Buttons)
+        self.tMortadelo = QPushButton("Mortadelo")
+        self.tFilemon = QPushButton("Filemon")
+        self.tCarpanta = QPushButton("Carpanta")
+        self.tRompetechos = QPushButton("Rompetechos")
+        self.tPepeGotera = QPushButton("Pepe Gotera")
+        self.tOtilio = QPushButton("Otilio")
+
+        # Configurar botones como "checkeables" (toggle)
+        self.tMortadelo.setCheckable(True)
+        self.tMortadelo.setChecked(False)
+        self.tFilemon.setCheckable(True)
+        self.tFilemon.setChecked(False)
+        self.tCarpanta.setCheckable(True)
+        self.tCarpanta.setChecked(False)
+        self.tRompetechos.setCheckable(True)
+        self.tRompetechos.setChecked(False)
+        self.tPepeGotera.setCheckable(True)
+        self.tPepeGotera.setChecked(False)
+        self.tOtilio.setCheckable(True)
+        self.tOtilio.setChecked(False)
+
+        self.cajaHorizontal2 = QHBoxLayout()
+        self.cajaHorizontal2.addWidget(self.tMortadelo)
+        self.cajaHorizontal2.addWidget(self.tFilemon)
+        self.cajaHorizontal2.addWidget(self.tCarpanta)
+        self.cajaHorizontal2.addWidget(self.tRompetechos)
+        self.cajaHorizontal2.addWidget(self.tPepeGotera)
+        self.cajaHorizontal2.addWidget(self.tOtilio)
+
+        self.group2 = QGroupBox("Toggle Buttons")
+        self.group2.setLayout(self.cajaHorizontal2)
+
+        self.cajaVertical = QVBoxLayout()
+        self.cajaVertical.addWidget(self.group)
+        self.cajaVertical.addWidget(self.group2)
+
+        self.setLayout(self.cajaVertical)
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = ventanaBotones()
+    sys.exit(app.exec())
+```
+
+### Explicación del Código
+
+#### QGroupBox - Agrupación de Widgets
+```python
+self.group = QGroupBox("Push Buttons")
+self.group.setLayout(self.cajaHorizontal1)
+```
+- **QGroupBox**: Widget que agrupa otros widgets con un título y un marco
+- **Propósito**: Organizar visualmente elementos relacionados
+- **setLayout()**: Asigna un layout al grupo
+
+#### Botones Normales vs Toggle Buttons
+
+**Botones Normales (Push Buttons):**
+```python
+self.bMortadelo = QPushButton("Mortadelo")
+```
+- Comportamiento normal: se presionan y sueltan
+- No mantienen estado
+
+**Toggle Buttons (Botones con Estado):**
+```python
+self.tMortadelo = QPushButton("Mortadelo")
+self.tMortadelo.setCheckable(True)
+self.tMortadelo.setChecked(False)
+```
+
+### Configuración de Toggle Buttons
+
+#### setCheckable(True)
+```python
+self.tMortadelo.setCheckable(True)
+```
+- **setCheckable(True)**: Hace que el botón pueda mantener un estado (marcado/no marcado)
+- El botón se comporta como un interruptor
+- Cambia de apariencia visual cuando está marcado
+
+#### setChecked(False/True)
+```python
+self.tMortadelo.setChecked(False)  # Estado inicial: no marcado
+```
+- **setChecked()**: Establece el estado inicial del botón
+- `True`: Botón marcado/presionado
+- `False`: Botón no marcado/normal
+
+### Comportamiento de los Toggle Buttons
+
+#### Estados del Botón:
+- **No marcado**: Apariencia normal
+- **Marcado**: Apariencia presionada (como si estuviera hundido)
+
+#### Interacción:
+- **Clic**: Cambia entre marcado y no marcado
+- **Mantiene el estado** hasta que se vuelve a hacer clic
+
+### Métodos Útiles para Toggle Buttons
+
+#### Verificar Estado Actual
+```python
+if self.tMortadelo.isChecked():
+    print("Mortadelo está marcado")
+else:
+    print("Mortadelo no está marcado")
+```
+
+#### Cambiar Estado Programáticamente
+```python
+self.tMortadelo.setChecked(True)   # Marcar
+self.tMortadelo.setChecked(False)  # Desmarcar
+```
+
+#### Alternar Estado
+```python
+self.tMortadelo.toggle()  # Cambia al estado opuesto
+```
+
+### Conexión de Señales para Toggle Buttons
+
+#### Señal clicked vs toggled
+```python
+# Se ejecuta cada vez que se hace clic (sin importar el estado)
+self.tMortadelo.clicked.connect(self.boton_clicado)
+
+# Se ejecuta cuando cambia el estado, recibe el nuevo estado como parámetro
+self.tMortadelo.toggled.connect(self.boton_alternado)
+```
+
+#### Ejemplo de Funciones de Conexión
+```python
+def inicializarUI(self):
+    # ... código anterior ...
+    
+    # Conectar señales de los toggle buttons
+    self.tMortadelo.toggled.connect(self.actualizar_estado_mortadelo)
+    self.tFilemon.toggled.connect(self.actualizar_estado_filemon)
+    # ... conectar los demás botones
+
+def actualizar_estado_mortadelo(self, estado):
+    if estado:
+        print("Mortadelo ACTIVADO")
+    else:
+        print("Mortadelo DESACTIVADO")
+
+def actualizar_estado_filemon(self, estado):
+    if estado:
+        print("Filemon ACTIVADO")
+    else:
+        print("Filemon DESACTIVADO")
+```
+
+### Ejemplo Mejorado con Funcionalidad Completa
+
+```python
+import sys
+from PyQt6.QtWidgets import (QWidget, QPushButton, QHBoxLayout, QVBoxLayout, 
+                             QApplication, QGroupBox, QLabel)
+
+class ventanaBotones(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        # Configurar ventana
+        self.setWindowTitle("Ejemplo de Botones")
+        self.setGeometry(100, 100, 600, 200)
+        
+        # Botones normales
+        self.crear_botones_normales()
+        
+        # Botones toggle
+        self.crear_botones_toggle()
+        
+        # Etiqueta para mostrar estado
+        self.etiqueta_estado = QLabel("Estado: Ningún botón toggle seleccionado")
+        
+        # Layout principal
+        caja_vertical = QVBoxLayout()
+        caja_vertical.addWidget(self.group)
+        caja_vertical.addWidget(self.group2)
+        caja_vertical.addWidget(self.etiqueta_estado)
+        
+        self.setLayout(caja_vertical)
+
+    def crear_botones_normales(self):
+        # Crear botones normales
+        botones_normales = ["Mortadelo", "Filemon", "Carpanta", 
+                           "Rompetechos", "Pepe Gotera", "Otilio"]
+        
+        self.botones_normales = {}
+        caja_horizontal = QHBoxLayout()
+        
+        for nombre in botones_normales:
+            boton = QPushButton(nombre)
+            boton.clicked.connect(lambda checked, nom=nombre: self.boton_normal_pulsado(nom))
+            self.botones_normales[nombre] = boton
+            caja_horizontal.addWidget(boton)
+        
+        self.group = QGroupBox("Push Buttons (Normales)")
+        self.group.setLayout(caja_horizontal)
+
+    def crear_botones_toggle(self):
+        # Crear botones toggle
+        botones_toggle = ["Mortadelo", "Filemon", "Carpanta", 
+                         "Rompetechos", "Pepe Gotera", "Otilio"]
+        
+        self.botones_toggle = {}
+        caja_horizontal = QHBoxLayout()
+        
+        for nombre in botones_toggle:
+            boton = QPushButton(nombre)
+            boton.setCheckable(True)
+            boton.setChecked(False)
+            boton.toggled.connect(lambda estado, nom=nombre: self.boton_toggle_cambiado(nom, estado))
+            self.botones_toggle[nombre] = boton
+            caja_horizontal.addWidget(boton)
+        
+        self.group2 = QGroupBox("Toggle Buttons (Con Estado)")
+        self.group2.setLayout(caja_horizontal)
+
+    def boton_normal_pulsado(self, nombre):
+        print(f"Botón normal pulsado: {nombre}")
+
+    def boton_toggle_cambiado(self, nombre, estado):
+        if estado:
+            print(f"Toggle ACTIVADO: {nombre}")
+        else:
+            print(f"Toggle DESACTIVADO: {nombre}")
+        
+        # Actualizar etiqueta con los botones activos
+        botones_activos = [nom for nom, btn in self.botones_toggle.items() if btn.isChecked()]
+        if botones_activos:
+            self.etiqueta_estado.setText(f"Estado: {', '.join(botones_activos)}")
+        else:
+            self.etiqueta_estado.setText("Estado: Ningún botón toggle seleccionado")
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = ventanaBotones()
+    sys.exit(app.exec())
+```
+
+### Diferencias Visuales y de Comportamiento
+
+| Característica | Push Button Normal | Toggle Button |
+|----------------|-------------------|---------------|
+| **Apariencia** | Siempre igual | Cambia cuando está marcado |
+| **Estado** | No mantiene estado | Mantiene estado (on/off) |
+| **Uso típico** | Acciones inmediatas | Opciones/configuraciones |
+| **Señal útil** | `clicked` | `toggled` |
+
+### Casos de Uso para Toggle Buttons
+
+1. **Opciones de configuración**: Activar/desactivar funciones
+2. **Modos de aplicación**: Modo edición vs modo visualización
+3. **Selección múltiple**: Cuando se pueden elegir varias opciones
+4. **Interruptores virtuales**: Encendido/apagado de características
+
+### Ventajas de QGroupBox
+
+1. **Organización visual**: Agrupa elementos relacionados
+2. **Mejor usabilidad**: Los usuarios entienden la relación entre los widgets
+3. **Ahorro de espacio**: Permite organizar más elementos de forma clara
+4. **Título descriptivo**: Explica el propósito del grupo
