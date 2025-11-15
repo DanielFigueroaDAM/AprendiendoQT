@@ -2229,3 +2229,1232 @@ if __name__ == '__main__':
 2. **Mejor usabilidad**: Los usuarios entienden la relación entre los widgets
 3. **Ahorro de espacio**: Permite organizar más elementos de forma clara
 4. **Título descriptivo**: Explica el propósito del grupo
+
+# Guía de PyQt6 - Señales y RadioButtons
+
+## 25. RadioButtons y Manejo de Señales
+
+### Código de Ejemplo con RadioButtons
+```python
+import sys
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QRadioButton, QVBoxLayout, QHBoxLayout, QTextEdit
+
+class VentanaConRadioButton(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        self.setWindowTitle("Radio Buttons")
+        self.cajaHorizontal = QHBoxLayout()
+
+        self.boton1 = QRadioButton("Mostrar Nombre")
+        self.boton2 = QRadioButton("Mostrar edad")
+        self.boton3 = QRadioButton("Pasar texto a label")
+        self.boton4 = QRadioButton("Pasar texto a mayusculas")
+
+        self.cajaHorizontal.addWidget(self.boton1)
+        self.cajaHorizontal.addWidget(self.boton2)
+        self.cajaHorizontal.addWidget(self.boton3)
+        self.cajaHorizontal.addWidget(self.boton4)
+
+        self.panelParaEscribir = QTextEdit()
+        self.panelParaMostrar = QTextEdit()
+        self.panelParaMostrar.setDisabled(True)
+
+        self.cajaVertical = QVBoxLayout()
+
+        self.cajaVertical.addLayout(self.cajaHorizontal)
+        self.cajaVertical.addWidget(self.panelParaEscribir)
+        self.cajaVertical.addWidget(self.panelParaMostrar)
+
+        self.boton1.clicked.connect(self.mostrarNombre)
+        self.boton2.clicked.connect(self.mostrarEdad)
+        self.boton3.clicked.connect(self.pasarTextoALabel)
+        self.boton4.clicked.connect(self.pasarTextoAMayusculas)
+
+        self.setLayout(self.cajaVertical)
+
+    def mostrarNombre(self):
+        self.panelParaMostrar.setPlainText("Daniel")
+    def mostrarEdad(self):
+        self.panelParaMostrar.setPlainText("22")
+
+    def pasarTextoALabel(self):
+        texto = self.panelParaEscribir.toPlainText()
+        self.panelParaMostrar.setPlainText(texto)
+
+    def pasarTextoAMayusculas(self):
+        texto = self.panelParaMostrar.toPlainText()
+        self.panelParaMostrar.setPlainText(texto.upper())
+```
+
+![img_8.png](img_8.png)
+
+
+## Explicación Detallada
+
+### QRadioButton - Botones de Opción Única
+
+#### Características Principales
+```python
+self.boton1 = QRadioButton("Mostrar Nombre")
+```
+- **Selección exclusiva**: Solo un RadioButton puede estar seleccionado a la vez dentro del mismo grupo
+- **Comportamiento de grupo**: Automáticamente se deseleccionan mutuamente
+- **Estado visual**: Muestra un punto cuando está seleccionado
+
+### Señales en PyQt6 - Conceptos Fundamentales
+
+#### ¿Qué son las Señales?
+- **Señales**: Eventos que emiten los widgets cuando ocurre algo (click, cambio de texto, etc.)
+- **Slots**: Funciones que se ejecutan cuando se recibe una señal
+- **Conexión**: Enlace entre una señal y un slot
+
+#### Tipos de Conexiones en el Código
+
+**Conexión Directa:**
+```python
+self.boton1.clicked.connect(self.mostrarNombre)
+```
+
+**Flujo:**
+1. Usuario hace clic en `boton1`
+2. Se emite la señal `clicked`
+3. Se ejecuta la función `mostrarNombre`
+
+### Análisis de las Señales Usadas
+
+#### Señal `clicked` para RadioButtons
+```python
+self.boton1.clicked.connect(self.mostrarNombre)
+```
+- **Ventaja**: Simple y directa
+- **Desventaja**: Se ejecuta incluso si el RadioButton ya estaba seleccionado
+
+#### Alternativa: Señal `toggled`
+```python
+# Versión mejorada con toggled
+self.boton1.toggled.connect(self.mostrarNombre)
+```
+
+**Diferencia:**
+- `clicked`: Solo cuando se hace clic físicamente
+- `toggled`: Cuando cambia el estado (recibe parámetro True/False)
+
+### Ejemplo Mejorado con Manejo de Estados
+
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QRadioButton, 
+                             QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,
+                             QButtonGroup)
+
+class VentanaConRadioButton(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        self.setWindowTitle("Radio Buttons - Señales Avanzadas")
+        self.setGeometry(100, 100, 500, 400)
+        
+        # Crear RadioButtons
+        self.boton1 = QRadioButton("Mostrar Nombre")
+        self.boton2 = QRadioButton("Mostrar Edad")
+        self.boton3 = QRadioButton("Copiar Texto")
+        self.boton4 = QRadioButton("Convertir a Mayúsculas")
+        
+        # Crear grupo de botones para gestión automática
+        self.grupo_botones = QButtonGroup()
+        self.grupo_botones.addButton(self.boton1, 1)
+        self.grupo_botones.addButton(self.boton2, 2)
+        self.grupo_botones.addButton(self.boton3, 3)
+        self.grupo_botones.addButton(self.boton4, 4)
+        
+        # Áreas de texto
+        self.panelParaEscribir = QTextEdit()
+        self.panelParaEscribir.setPlaceholderText("Escribe algo aquí...")
+        
+        self.panelParaMostrar = QTextEdit()
+        self.panelParaMostrar.setDisabled(True)
+        self.panelParaMostrar.setPlaceholderText("Aquí se mostrará el resultado")
+        
+        # Etiqueta para mostrar el estado
+        self.etiqueta_estado = QLabel("Estado: Ninguna opción seleccionada")
+        
+        # Layouts
+        caja_botones = QHBoxLayout()
+        caja_botones.addWidget(self.boton1)
+        caja_botones.addWidget(self.boton2)
+        caja_botones.addWidget(self.boton3)
+        caja_botones.addWidget(self.boton4)
+        
+        caja_vertical = QVBoxLayout()
+        caja_vertical.addLayout(caja_botones)
+        caja_vertical.addWidget(QLabel("Área de entrada:"))
+        caja_vertical.addWidget(self.panelParaEscribir)
+        caja_vertical.addWidget(QLabel("Área de salida:"))
+        caja_vertical.addWidget(self.panelParaMostrar)
+        caja_vertical.addWidget(self.etiqueta_estado)
+        
+        self.setLayout(caja_vertical)
+        
+        # CONEXIONES DE SEÑALES MEJORADAS
+        self.conectar_señales()
+
+    def conectar_señales(self):
+        # Usar toggled en lugar de clicked para mejor control
+        self.boton1.toggled.connect(self.manejar_boton1)
+        self.boton2.toggled.connect(self.manejar_boton2)
+        self.boton3.toggled.connect(self.manejar_boton3)
+        self.boton4.toggled.connect(self.manejar_boton4)
+        
+        # Señal cuando cambia el texto de entrada
+        self.panelParaEscribir.textChanged.connect(self.actualizar_salida)
+
+    def manejar_boton1(self, activado):
+        if activado:
+            self.panelParaMostrar.setPlainText("Daniel")
+            self.etiqueta_estado.setText("Estado: Mostrando nombre")
+
+    def manejar_boton2(self, activado):
+        if activado:
+            self.panelParaMostrar.setPlainText("22")
+            self.etiqueta_estado.setText("Estado: Mostrando edad")
+
+    def manejar_boton3(self, activado):
+        if activado:
+            self.actualizar_salida()
+            self.etiqueta_estado.setText("Estado: Modo copia")
+
+    def manejar_boton4(self, activado):
+        if activado:
+            texto_actual = self.panelParaMostrar.toPlainText()
+            self.panelParaMostrar.setPlainText(texto_actual.upper())
+            self.etiqueta_estado.setText("Estado: Modo mayúsculas")
+
+    def actualizar_salida(self):
+        # Actualizar solo si el botón de copia está activado
+        if self.boton3.isChecked():
+            texto = self.panelParaEscribir.toPlainText()
+            self.panelParaMostrar.setPlainText(texto)
+        
+        # Si el botón de mayúsculas está activado, aplicar transformación
+        if self.boton4.isChecked():
+            texto = self.panelParaMostrar.toPlainText()
+            self.panelParaMostrar.setPlainText(texto.upper())
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = VentanaConRadioButton()
+    sys.exit(app.exec())
+```
+![img_10.png](img_10.png)
+## Tipos de Señales Comunes en PyQt6
+
+### Señales de Botones
+```python
+# QPushButton / QRadioButton
+.clicked.connect(funcion)      # Al hacer clic
+.toggled.connect(funcion)      # Al cambiar estado (con parámetro)
+.pressed.connect(funcion)      # Al presionar (sin soltar)
+.released.connect(funcion)     # Al soltar
+```
+
+### Señales de Campos de Texto
+```python
+# QLineEdit / QTextEdit
+.textChanged.connect(funcion)           # Cuando cambia el texto
+.textEdited.connect(funcion)            # Cuando el usuario edita
+.returnPressed.connect(funcion)         # Al presionar Enter
+.selectionChanged.connect(funcion)      # Al cambiar selección
+```
+
+### Señales de Selectores
+```python
+# QComboBox
+.currentIndexChanged.connect(funcion)    # Al cambiar índice
+.currentTextChanged.connect(funcion)     # Al cambiar texto
+.activated.connect(funcion)              # Al activar un item
+```
+
+## Mejores Prácticas con Señales
+
+### 1. Usar `toggled` en lugar de `clicked` para RadioButtons
+```python
+# ❌ Menos óptimo
+self.radio.toggled.connect(self.funcion)
+
+# ✅ Mejor - recibe el estado como parámetro
+self.radio.toggled.connect(self.funcion)
+
+def funcion(self, activado):
+    if activado:
+        # Solo ejecutar cuando se activa
+        print("Radio activado")
+```
+
+### 2. Verificar Estado con `isChecked()`
+```python
+def alguna_funcion(self):
+    if self.boton1.isChecked():
+        # Hacer algo solo si está seleccionado
+        self.ejecutar_accion()
+```
+
+### 3. Agrupar RadioButtons Lógicamente
+```python
+from PyQt6.QtWidgets import QButtonGroup
+
+# Crear grupo para gestión automática
+self.grupo = QButtonGroup()
+self.grupo.addButton(self.radio1)
+self.grupo.addButton(self.radio2)
+self.grupo.addButton(self.radio3)
+
+# Conectar señal del grupo
+self.grupo.buttonToggled.connect(self.radio_cambiado)
+```
+
+### 4. Manejar Múltiples Señales con Lambda
+```python
+# Para diferenciar qué botón emitió la señal
+self.boton1.toggled.connect(lambda estado, btn=1: self.manejar_radio(btn, estado))
+self.boton2.toggled.connect(lambda estado, btn=2: self.manejar_radio(btn, estado))
+
+def manejar_radio(self, numero_boton, activado):
+    if activado:
+        print(f"Botón {numero_boton} activado")
+```
+
+## Ejemplo Avanzado: Sistema de Filtros con RadioButtons
+
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QRadioButton, 
+                             QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,
+                             QButtonGroup)
+
+class FiltroTexto(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        self.setWindowTitle("Sistema de Filtros con RadioButtons")
+        self.setGeometry(100, 100, 600, 500)
+        
+        # RadioButtons para diferentes filtros
+        self.radio_sin_filtro = QRadioButton("Sin filtro")
+        self.radio_mayusculas = QRadioButton("Mayúsculas")
+        self.radio_minusculas = QRadioButton("Minúsculas")
+        self.radio_invertir = QRadioButton("Invertir texto")
+        self.radio_contar = QRadioButton("Contar palabras")
+        
+        # Grupo de botones
+        self.grupo_filtros = QButtonGroup()
+        self.grupo_filtros.addButton(self.radio_sin_filtro)
+        self.grupo_filtros.addButton(self.radio_mayusculas)
+        self.grupo_filtros.addButton(self.radio_minusculas)
+        self.grupo_filtros.addButton(self.radio_invertir)
+        self.grupo_filtros.addButton(self.radio_contar)
+        
+        # Seleccionar uno por defecto
+        self.radio_sin_filtro.setChecked(True)
+        
+        # Áreas de texto
+        self.entrada = QTextEdit()
+        self.entrada.setPlaceholderText("Escribe el texto a filtrar...")
+        self.salida = QTextEdit()
+        self.salida.setReadOnly(True)
+        
+        # Etiqueta de información
+        self.info = QLabel("Texto procesado: 0 caracteres")
+        
+        # Layout
+        layout_botones = QHBoxLayout()
+        layout_botones.addWidget(self.radio_sin_filtro)
+        layout_botones.addWidget(self.radio_mayusculas)
+        layout_botones.addWidget(self.radio_minusculas)
+        layout_botones.addWidget(self.radio_invertir)
+        layout_botones.addWidget(self.radio_contar)
+        
+        layout_principal = QVBoxLayout()
+        layout_principal.addWidget(QLabel("Selecciona un filtro:"))
+        layout_principal.addLayout(layout_botones)
+        layout_principal.addWidget(QLabel("Entrada:"))
+        layout_principal.addWidget(self.entrada)
+        layout_principal.addWidget(QLabel("Salida:"))
+        layout_principal.addWidget(self.salida)
+        layout_principal.addWidget(self.info)
+        
+        self.setLayout(layout_principal)
+        
+        # Conectar señales
+        self.conectar_señales()
+
+    def conectar_señales(self):
+        # Conectar cambio de texto
+        self.entrada.textChanged.connect(self.aplicar_filtro)
+        
+        # Conectar cambio de radio buttons
+        self.radio_sin_filtro.toggled.connect(self.aplicar_filtro)
+        self.radio_mayusculas.toggled.connect(self.aplicar_filtro)
+        self.radio_minusculas.toggled.connect(self.aplicar_filtro)
+        self.radio_invertir.toggled.connect(self.aplicar_filtro)
+        self.radio_contar.toggled.connect(self.aplicar_filtro)
+
+    def aplicar_filtro(self):
+        texto = self.entrada.toPlainText()
+        
+        if self.radio_mayusculas.isChecked():
+            resultado = texto.upper()
+        elif self.radio_minusculas.isChecked():
+            resultado = texto.lower()
+        elif self.radio_invertir.isChecked():
+            resultado = texto[::-1]  # Invertir texto
+        elif self.radio_contar.isChecked():
+            palabras = len(texto.split())
+            resultado = f"Palabras: {palabras}, Caracteres: {len(texto)}"
+        else:  # Sin filtro
+            resultado = texto
+        
+        self.salida.setPlainText(resultado)
+        self.info.setText(f"Texto procesado: {len(resultado)} caracteres")
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = FiltroTexto()
+    sys.exit(app.exec())
+```
+![img_12.png](img_12.png)
+## Resumen de Conceptos Clave
+
+1. **RadioButtons**: Para selección única entre opciones mutuamente excluyentes
+2. **Señales**: Mecanismo de comunicación entre widgets y funciones
+3. **clicked vs toggled**: Usar `toggled` cuando necesitas saber el estado
+4. **Grupos de botones**: Para gestionar RadioButtons relacionados
+5. **Múltiples señales**: Pueden conectarse a una misma función
+
+# Guía de PyQt6 - Trabajando con QButtonGroup
+
+## 26. Grupos de Botones - QButtonGroup
+
+### Código Base - Grupos de Botones
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QRadioButton,
+                             QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,
+                             QButtonGroup)
+
+class trabajandoConGrupos(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        self.boton1 = QRadioButton("Libre")
+        self.boton2 = QRadioButton("Agrupado1")
+        self.boton3 = QRadioButton("Agrupado2")
+        self.boton4 = QRadioButton("Agrupado3")
+
+        # QButtonGroup es solo un contenedor lógico (no es un QLayout).
+        # Se usa para gestionar exclusividad/señales, no para añadir al layout.
+        self.grupo = QButtonGroup()
+        self.grupo.addButton(self.boton2)
+        self.grupo.addButton(self.boton3)
+        self.grupo.addButton(self.boton4)
+
+        self.cajaHorizontal = QHBoxLayout()
+
+        # Crear un QLayout real para los botones del grupo y añadir los widgets.
+        self.grupoLayout = QVBoxLayout()  # layout físico para los radio buttons agrupados
+        self.grupoLayout.addWidget(self.boton2)
+        self.grupoLayout.addWidget(self.boton3)
+        self.grupoLayout.addWidget(self.boton4)
+
+        # Añadir el layout del grupo al layout horizontal
+        self.cajaHorizontal.addLayout(self.grupoLayout)
+
+        # Añadir el botón independiente como widget
+        self.cajaHorizontal.addWidget(self.boton1)
+
+        self.setLayout(self.cajaHorizontal)
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = trabajandoConGrupos()
+    sys.exit(app.exec())
+```
+
+## Explicación Detallada de QButtonGroup
+
+### ¿Qué es QButtonGroup?
+
+**QButtonGroup** es un contenedor lógico (no visual) que agrupa botones para:
+- Gestionar la exclusividad mutua automáticamente
+- Manejar señales de forma colectiva
+- Identificar botones con IDs únicos
+
+### Diferencias Clave
+
+| Característica | Layout Visual | QButtonGroup |
+|----------------|---------------|--------------|
+| **Propósito** | Organizar widgets visualmente | Gestionar lógica de botones |
+| **Se ve en pantalla** | Sí | No |
+| **Exclusividad** | No la proporciona | Sí, automáticamente |
+| **Señales** | No emite señales | Señales grupales |
+
+### Creación y Configuración de Grupos
+
+#### Crear el Grupo
+```python
+self.grupo = QButtonGroup()
+```
+
+#### Agregar Botones al Grupo
+```python
+self.grupo.addButton(self.boton2)
+self.grupo.addButton(self.boton3)
+self.grupo.addButton(self.boton4)
+```
+
+#### Agregar con IDs Personalizados
+```python
+self.grupo.addButton(self.boton2, 1)  # ID = 1
+self.grupo.addButton(self.boton3, 2)  # ID = 2  
+self.grupo.addButton(self.boton4, 3)  # ID = 3
+```
+
+### Ejemplo Completo con Funcionalidad
+
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QRadioButton,
+                             QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,
+                             QButtonGroup, QGroupBox)
+
+class trabajandoConGrupos(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        self.setWindowTitle("QButtonGroup - Grupos de Botones")
+        self.setGeometry(100, 100, 500, 300)
+        
+        # Crear botones
+        self.boton_libre = QRadioButton("Botón Libre (fuera de grupo)")
+        self.boton_grupo1 = QRadioButton("Agrupado - Opción 1")
+        self.boton_grupo2 = QRadioButton("Agrupado - Opción 2") 
+        self.boton_grupo3 = QRadioButton("Agrupado - Opción 3")
+        
+        # CREAR GRUPO LÓGICO
+        self.grupo_principal = QButtonGroup()
+        
+        # Agregar botones al grupo con IDs
+        self.grupo_principal.addButton(self.boton_grupo1, 1)
+        self.grupo_principal.addButton(self.boton_grupo2, 2)
+        self.grupo_principal.addButton(self.boton_grupo3, 3)
+        
+        # ORGANIZACIÓN VISUAL
+        # Grupo para botones agrupados (visual)
+        grupo_visual = QGroupBox("Botones Agrupados (QButtonGroup)")
+        layout_grupo = QVBoxLayout()
+        layout_grupo.addWidget(self.boton_grupo1)
+        layout_grupo.addWidget(self.boton_grupo2)
+        layout_grupo.addWidget(self.boton_grupo3)
+        grupo_visual.setLayout(layout_grupo)
+        
+        # Grupo para botón libre (visual)
+        grupo_libre = QGroupBox("Botón Libre")
+        layout_libre = QVBoxLayout()
+        layout_libre.addWidget(self.boton_libre)
+        grupo_libre.setLayout(layout_libre)
+        
+        # Área de información
+        self.etiqueta_info = QLabel("Selecciona diferentes botones para ver el comportamiento")
+        self.etiqueta_info.setStyleSheet("background-color: #f0f0f0; padding: 10px;")
+        
+        # Layout principal
+        layout_horizontal = QHBoxLayout()
+        layout_horizontal.addWidget(grupo_visual)
+        layout_horizontal.addWidget(grupo_libre)
+        
+        layout_principal = QVBoxLayout()
+        layout_principal.addLayout(layout_horizontal)
+        layout_principal.addWidget(self.etiqueta_info)
+        
+        self.setLayout(layout_principal)
+        
+        # CONECTAR SEÑALES
+        self.conectar_señales()
+
+    def conectar_señales(self):
+        # Señales de botones individuales
+        self.boton_libre.toggled.connect(self.boton_libre_cambiado)
+        
+        # Señales del grupo
+        self.grupo_principal.buttonToggled.connect(self.grupo_cambiado)
+        self.grupo_principal.idClicked.connect(self.grupo_clicado)
+
+    def boton_libre_cambiado(self, estado):
+        if estado:
+            self.etiqueta_info.setText("✅ Botón LIBRE seleccionado - No afecta a los agrupados")
+        else:
+            self.etiqueta_info.setText("🔘 Botón LIBRE deseleccionado")
+
+    def grupo_cambiado(self, boton, estado):
+        if estado:
+            id_boton = self.grupo_principal.id(boton)
+            texto_boton = boton.text()
+            self.etiqueta_info.setText(f"✅ Grupo: Botón {id_boton} ({texto_boton}) seleccionado")
+
+    def grupo_clicado(self, id_boton):
+        self.etiqueta_info.setText(f"🖱️ Grupo: Clic en botón con ID {id_boton}")
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = trabajandoConGrupos()
+    sys.exit(app.exec())
+```
+
+## Métodos y Señales de QButtonGroup
+
+### Métodos Principales
+
+#### Agregar y Remover Botones
+```python
+# Agregar botón
+grupo.addButton(boton)
+grupo.addButton(boton, id)  # Con ID específico
+
+# Remover botón
+grupo.removeButton(boton)
+
+# Obtener botón por ID
+boton = grupo.button(id)
+
+# Obtener ID de un botón
+id = grupo.id(boton)
+```
+
+#### Gestión de Exclusividad
+```python
+# Verificar exclusividad
+es_exclusivo = grupo.exclusive()
+
+# Cambiar exclusividad
+grupo.setExclusive(True)  # Solo uno seleccionado a la vez
+grupo.setExclusive(False) # Múltiples selecciones permitidas
+```
+
+#### Obtener Botones
+```python
+# Todos los botones del grupo
+botones = grupo.buttons()
+
+# Botón seleccionado
+boton_seleccionado = grupo.checkedButton()
+
+# ID del botón seleccionado
+id_seleccionado = grupo.checkedId()
+```
+
+### Señales de QButtonGroup
+
+#### buttonClicked
+```python
+# Se emite cuando se hace clic en cualquier botón del grupo
+grupo.buttonClicked.connect(self.funcion)
+
+# Con parámetro del botón
+def funcion(self, boton):
+    print(f"Botón clicado: {boton.text()}")
+```
+
+#### buttonClicked con ID
+```python
+# Se emite con el ID del botón
+grupo.idClicked.connect(self.funcion_con_id)
+
+def funcion_con_id(self, id_boton):
+    print(f"Botón con ID {id_boton} fue clicado")
+```
+
+#### buttonToggled
+```python
+# Se emite cuando cambia el estado de cualquier botón
+grupo.buttonToggled.connect(self.funcion_toggle)
+
+def funcion_toggle(self, boton, estado):
+    if estado:
+        print(f"Botón {boton.text()} ACTIVADO")
+    else:
+        print(f"Botón {boton.text()} DESACTIVADO")
+```
+
+#### idToggled
+```python
+# Se emite con ID cuando cambia el estado
+grupo.idToggled.connect(self.funcion_id_toggle)
+
+def funcion_id_toggle(self, id_boton, estado):
+    if estado:
+        print(f"Botón ID {id_boton} ACTIVADO")
+```
+
+## Ejemplos Avanzados con Múltiples Grupos
+
+### Ejemplo: Sistema de Configuración con Múltiples Grupos
+
+```python
+import sys
+from PyQt6.QtWidgets import (QApplication, QWidget, QRadioButton,
+                             QVBoxLayout, QHBoxLayout, QLabel,
+                             QButtonGroup, QGroupBox, QPushButton)
+
+class SistemaConfiguracion(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        self.setWindowTitle("Sistema de Configuración - Múltiples Grupos")
+        self.setGeometry(100, 100, 600, 400)
+        
+        # CREAR MÚLTIPLES GRUPOS
+        self.crear_grupo_tema()
+        self.crear_grupo_idioma()
+        self.crear_grupo_privacidad()
+        
+        # Botón de aplicación
+        self.boton_aplicar = QPushButton("Aplicar Configuración")
+        self.boton_aplicar.clicked.connect(self.aplicar_configuracion)
+        
+        # Área de resultados
+        self.etiqueta_resultado = QLabel("Configuración actual: Sin cambios")
+        self.etiqueta_resultado.setStyleSheet("background-color: #e8f4f8; padding: 15px; border: 1px solid #bee5eb;")
+        
+        # Layout principal
+        layout_principal = QVBoxLayout()
+        layout_principal.addWidget(self.grupo_tema)
+        layout_principal.addWidget(self.grupo_idioma)
+        layout_principal.addWidget(self.grupo_privacidad)
+        layout_principal.addWidget(self.boton_aplicar)
+        layout_principal.addWidget(self.etiqueta_resultado)
+        
+        self.setLayout(layout_principal)
+
+    def crear_grupo_tema(self):
+        # Grupo para selección de tema
+        self.tema_claro = QRadioButton("Tema Claro")
+        self.tema_oscuro = QRadioButton("Tema Oscuro")
+        self.tema_auto = QRadioButton("Tema Automático")
+        
+        self.grupo_tema_logico = QButtonGroup()
+        self.grupo_tema_logico.addButton(self.tema_claro, 1)
+        self.grupo_tema_logico.addButton(self.tema_oscuro, 2)
+        self.grupo_tema_logico.addButton(self.tema_auto, 3)
+        
+        # Seleccionar por defecto
+        self.tema_claro.setChecked(True)
+        
+        # Grupo visual
+        self.grupo_tema = QGroupBox("Selección de Tema")
+        layout_tema = QVBoxLayout()
+        layout_tema.addWidget(self.tema_claro)
+        layout_tema.addWidget(self.tema_oscuro)
+        layout_tema.addWidget(self.tema_auto)
+        self.grupo_tema.setLayout(layout_tema)
+        
+        # Conectar señales
+        self.grupo_tema_logico.buttonToggled.connect(self.tema_cambiado)
+
+    def crear_grupo_idioma(self):
+        # Grupo para selección de idioma
+        self.idioma_es = QRadioButton("Español")
+        self.idioma_en = QRadioButton("English")
+        self.idioma_fr = QRadioButton("Français")
+        
+        self.grupo_idioma_logico = QButtonGroup()
+        self.grupo_idioma_logico.addButton(self.idioma_es, 1)
+        self.grupo_idioma_logico.addButton(self.idioma_en, 2)
+        self.grupo_idioma_logico.addButton(self.idioma_fr, 3)
+        
+        # Seleccionar por defecto
+        self.idioma_es.setChecked(True)
+        
+        # Grupo visual
+        self.grupo_idioma = QGroupBox("Selección de Idioma")
+        layout_idioma = QVBoxLayout()
+        layout_idioma.addWidget(self.idioma_es)
+        layout_idioma.addWidget(self.idioma_en)
+        layout_idioma.addWidget(self.idioma_fr)
+        self.grupo_idioma.setLayout(layout_idioma)
+
+    def crear_grupo_privacidad(self):
+        # Grupo para configuración de privacidad
+        self.privacidad_alta = QRadioButton("Privacidad Alta")
+        self.privacidad_media = QRadioButton("Privacidad Media")
+        self.privacidad_baja = QRadioButton("Privacidad Baja")
+        
+        self.grupo_privacidad_logico = QButtonGroup()
+        self.grupo_privacidad_logico.addButton(self.privacidad_alta, 1)
+        self.grupo_privacidad_logico.addButton(self.privacidad_media, 2)
+        self.grupo_privacidad_logico.addButton(self.privacidad_baja, 3)
+        
+        # Seleccionar por defecto
+        self.privacidad_media.setChecked(True)
+        
+        # Grupo visual
+        self.grupo_privacidad = QGroupBox("Configuración de Privacidad")
+        layout_privacidad = QVBoxLayout()
+        layout_privacidad.addWidget(self.privacidad_alta)
+        layout_privacidad.addWidget(self.privacidad_media)
+        layout_privacidad.addWidget(self.privacidad_baja)
+        self.grupo_privacidad.setLayout(layout_privacidad)
+
+    def tema_cambiado(self, boton, estado):
+        if estado:
+            self.etiqueta_resultado.setText(f"Tema cambiado a: {boton.text()}")
+
+    def aplicar_configuracion(self):
+        # Obtener configuración actual
+        tema = self.grupo_tema_logico.checkedButton().text()
+        idioma = self.grupo_idioma_logico.checkedButton().text()
+        privacidad = self.grupo_privacidad_logico.checkedButton().text()
+        
+        mensaje = f"""
+        ✅ Configuración aplicada:
+        • Tema: {tema}
+        • Idioma: {idioma}
+        • Privacidad: {privacidad}
+        """
+        
+        self.etiqueta_resultado.setText(mensaje)
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = SistemaConfiguracion()
+    sys.exit(app.exec())
+```
+![img_13.png](img_13.png)
+## Ventajas de Usar QButtonGroup
+
+### 1. **Gestión Automática de Exclusividad**
+```python
+# Sin QButtonGroup - gestión manual
+def boton1_pulsado(self):
+    self.boton2.setChecked(False)
+    self.boton3.setChecked(False)
+
+# Con QButtonGroup - automático
+grupo = QButtonGroup()
+grupo.addButton(boton1)
+grupo.addButton(boton2)
+grupo.addButton(boton3)
+```
+
+### 2. **Identificación Fácil de Botones**
+```python
+# Con IDs
+id_seleccionado = grupo.checkedId()
+boton_seleccionado = grupo.button(id_seleccionado)
+```
+
+### 3. **Señales Colectivas**
+```python
+# Una señal para todos los botones del grupo
+grupo.buttonToggled.connect(self.cualquier_boton_cambiado)
+```
+
+### 4. **Código Más Limpio y Mantenible**
+```python
+# En lugar de conectar cada botón individualmente
+self.boton1.toggled.connect(...)
+self.boton2.toggled.connect(...)
+self.boton3.toggled.connect(...)
+
+# Una sola conexión para el grupo
+grupo.buttonToggled.connect(...)
+```
+
+## Casos de Uso Típicos para QButtonGroup
+
+1. **Sistemas de configuración**: Tema, idioma, preferencias
+2. **Formularios de opciones**: Selección única entre alternativas
+3. **Sistemas de filtros**: Filtrado por categorías
+4. **Interfaces de modo**: Modo edición, visualización, administración
+5. **Selección de categorías**: Categorías mutuamente excluyentes
+
+# Guía de PyQt6 - Model-View y Listas
+
+## 27. QListView y QStandardItemModel
+
+### Código Base - Listas con Model-View
+```python
+import sys
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
+from PyQt6.QtWidgets import (QApplication, QWidget, QRadioButton,
+                             QVBoxLayout, QHBoxLayout, QTextEdit, QLabel,
+                             QButtonGroup, QPushButton, QListView)
+
+class VentanaConListas(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        self.labelParaAñadirALista()
+        self.lista()
+
+        self.cajaVertical = QVBoxLayout()
+        self.cajaVertical.addLayout(self.cajaHorizontal)
+        self.cajaVertical.addWidget(self.lista1)
+
+        self.setLayout(self.cajaVertical)
+
+    def lista(self):
+        self.model = QStandardItemModel()
+        self.lista1 = QListView()
+
+    def anadirElemento(self):
+        text = self.label.toPlainText().strip()
+        if not text:
+            return
+        self.itemPrueba = QStandardItem(text)
+        self.model.appendRow(self.itemPrueba)
+        self.lista1.setModel(self.model)
+
+    def borrarUltimoElemento(self):
+        if not hasattr(self, "model") or self.model is None:
+            return
+        count = self.model.rowCount()
+        if count > 0:
+            self.model.removeRow(count - 1)
+
+    def labelParaAñadirALista(self):
+        self.label = QTextEdit()
+        self.botonAñadir = QPushButton("añadir")
+        self.botonBorrar = QPushButton("borrar")
+        self.cajaHorizontal = QHBoxLayout()
+        self.cajaHorizontal.addWidget(self.label)
+        self.cajaHorizontal.addWidget(self.botonAñadir)
+        self.cajaHorizontal.addWidget(self.botonBorrar)
+
+        self.botonBorrar.clicked.connect(self.borrarUltimoElemento)
+        self.botonAñadir.clicked.connect(self.anadirElemento)
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = VentanaConListas()
+    sys.exit(app.exec())
+```
+
+## Explicación Detallada del Patrón Model-View
+
+### ¿Qué es el Patrón Model-View?
+
+**Model-View** es un patrón de diseño que separa:
+- **Modelo (Model)**: Los datos y la lógica de negocio
+- **Vista (View)**: La presentación visual de los datos
+- **Controlador (Controller)**: Maneja la interacción del usuario
+
+En PyQt6, el delegado actúa como controlador.
+
+### Componentes en el Código
+
+#### QStandardItemModel - El Modelo
+```python
+self.model = QStandardItemModel()
+```
+- **Función**: Almacena y gestiona los datos
+- **Características**:
+  - Puede contener texto, iconos, checkboxes
+  - Maneja datos jerárquicos (listas, árboles)
+  - Notifica a la vista cuando los datos cambian
+
+#### QListView - La Vista
+```python
+self.lista1 = QListView()
+```
+- **Función**: Muestra los datos del modelo
+- **Características**:
+  - Presenta los datos en forma de lista
+  - Permite selección, edición, etc.
+  - Se actualiza automáticamente cuando el modelo cambia
+
+#### Conexión Modelo-Vista
+```python
+self.lista1.setModel(self.model)
+```
+- **Propósito**: Conecta la vista con el modelo
+- **Comportamiento**: La vista se actualiza automáticamente cuando el modelo cambia
+
+### QStandardItem - Elementos del Modelo
+
+#### Crear un Item
+```python
+self.itemPrueba = QStandardItem(text)
+```
+- **QStandardItem**: Representa un elemento en el modelo
+- **Puede contener**: Texto, icono, tooltip, estado de checkbox, etc.
+
+#### Propiedades de QStandardItem
+```python
+item = QStandardItem("Texto del elemento")
+
+# Configurar propiedades
+item.setToolTip("Tooltip del elemento")
+item.setCheckable(True)  # Hacer que tenga checkbox
+item.setEditable(False)  # No permitir edición
+```
+
+## Código Mejorado y Comentado
+
+```python
+import sys
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
+from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, 
+                             QHBoxLayout, QTextEdit, QPushButton, 
+                             QListView, QLabel, QGroupBox)
+
+class VentanaConListas(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+        self.show()
+
+    def inicializarUI(self):
+        self.setWindowTitle("Lista con Model-View")
+        self.setGeometry(100, 100, 500, 400)
+        
+        # Inicializar componentes
+        self.crear_area_entrada()
+        self.crear_lista()
+        self.crear_controles_avanzados()
+        
+        # Layout principal
+        layout_principal = QVBoxLayout()
+        
+        # Grupo para área de entrada
+        grupo_entrada = QGroupBox("Añadir Elementos a la Lista")
+        grupo_entrada.setLayout(self.cajaHorizontal)
+        layout_principal.addWidget(grupo_entrada)
+        
+        # Grupo para lista
+        grupo_lista = QGroupBox("Lista de Elementos")
+        layout_lista = QVBoxLayout()
+        layout_lista.addWidget(self.lista1)
+        grupo_lista.setLayout(layout_lista)
+        layout_principal.addWidget(grupo_lista)
+        
+        # Controles avanzados
+        layout_principal.addWidget(self.grupo_controles)
+        
+        self.setLayout(layout_principal)
+
+    def crear_area_entrada(self):
+        """Crea el área para añadir nuevos elementos"""
+        self.label = QTextEdit()
+        self.label.setMaximumHeight(60)  # Limitar altura
+        self.label.setPlaceholderText("Escribe el texto del nuevo elemento...")
+        
+        self.botonAñadir = QPushButton("Añadir")
+        self.botonBorrar = QPushButton("Borrar Último")
+        self.botonLimpiar = QPushButton("Limpiar Todo")
+        
+        self.cajaHorizontal = QHBoxLayout()
+        self.cajaHorizontal.addWidget(self.label)
+        self.cajaHorizontal.addWidget(self.botonAñadir)
+        self.cajaHorizontal.addWidget(self.botonBorrar)
+        self.cajaHorizontal.addWidget(self.botonLimpiar)
+        
+        # Conectar señales
+        self.botonAñadir.clicked.connect(self.anadirElemento)
+        self.botonBorrar.clicked.connect(self.borrarUltimoElemento)
+        self.botonLimpiar.clicked.connect(self.limpiarLista)
+
+    def crear_lista(self):
+        """Inicializa el modelo y la vista de lista"""
+        # Crear el modelo
+        self.model = QStandardItemModel()
+        self.model.setHorizontalHeaderLabels(["Elementos de la Lista"])  # Encabezado
+        
+        # Crear la vista
+        self.lista1 = QListView()
+        self.lista1.setModel(self.model)  # Conectar modelo con vista
+        
+        # Añadir algunos elementos de ejemplo
+        elementos_ejemplo = ["Elemento de ejemplo 1", "Elemento de ejemplo 2"]
+        for elemento in elementos_ejemplo:
+            item = QStandardItem(elemento)
+            self.model.appendRow(item)
+
+    def crear_controles_avanzados(self):
+        """Crea controles adicionales para gestionar la lista"""
+        self.grupo_controles = QGroupBox("Controles de la Lista")
+        layout_controles = QHBoxLayout()
+        
+        # Botones adicionales
+        self.botonBorrarSeleccionado = QPushButton("Borrar Seleccionado")
+        self.botonEditar = QPushButton("Editar Seleccionado")
+        self.botonContar = QPushButton("Contar Elementos")
+        
+        # Etiqueta para información
+        self.etiqueta_info = QLabel("Elementos: 2")
+        
+        layout_controles.addWidget(self.botonBorrarSeleccionado)
+        layout_controles.addWidget(self.botonEditar)
+        layout_controles.addWidget(self.botonContar)
+        layout_controles.addWidget(self.etiqueta_info)
+        
+        self.grupo_controles.setLayout(layout_controles)
+        
+        # Conectar señales
+        self.botonBorrarSeleccionado.clicked.connect(self.borrarSeleccionado)
+        self.botonEditar.clicked.connect(self.editarSeleccionado)
+        self.botonContar.clicked.connect(self.actualizarContador)
+        
+        # Conectar señal de selección cambiada
+        self.lista1.selectionModel().selectionChanged.connect(self.seleccionCambiada)
+
+    def anadirElemento(self):
+        """Añade un nuevo elemento a la lista"""
+        text = self.label.toPlainText().strip()
+        if not text:
+            return
+        
+        # Crear y configurar el item
+        item = QStandardItem(text)
+        item.setToolTip(f"Elemento añadido: {text}")
+        
+        # Añadir al modelo
+        self.model.appendRow(item)
+        
+        # Limpiar el área de texto
+        self.label.clear()
+        
+        # Actualizar contador
+        self.actualizarContador()
+        
+        # Seleccionar el nuevo elemento
+        index = self.model.index(self.model.rowCount() - 1, 0)
+        self.lista1.setCurrentIndex(index)
+
+    def borrarUltimoElemento(self):
+        """Elimina el último elemento de la lista"""
+        if self.model.rowCount() > 0:
+            self.model.removeRow(self.model.rowCount() - 1)
+            self.actualizarContador()
+
+    def borrarSeleccionado(self):
+        """Elimina el elemento seleccionado"""
+        index = self.lista1.currentIndex()
+        if index.isValid():
+            self.model.removeRow(index.row())
+            self.actualizarContador()
+
+    def editarSeleccionado(self):
+        """Permite editar el elemento seleccionado"""
+        index = self.lista1.currentIndex()
+        if index.isValid():
+            # Activar edición en la vista
+            self.lista1.edit(index)
+
+    def limpiarLista(self):
+        """Elimina todos los elementos de la lista"""
+        self.model.clear()
+        self.model.setHorizontalHeaderLabels(["Elementos de la Lista"])
+        self.actualizarContador()
+
+    def seleccionCambiada(self):
+        """Maneja el cambio de selección en la lista"""
+        index = self.lista1.currentIndex()
+        if index.isValid():
+            elemento = self.model.itemFromIndex(index).text()
+            self.etiqueta_info.setText(f"Seleccionado: {elemento}")
+
+    def actualizarContador(self):
+        """Actualiza el contador de elementos"""
+        count = self.model.rowCount()
+        self.etiqueta_info.setText(f"Elementos: {count}")
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = VentanaConListas()
+    sys.exit(app.exec())
+```
+
+## Métodos y Propiedades del Modelo
+
+### Métodos de QStandardItemModel
+
+#### Gestión de Datos
+```python
+# Añadir elementos
+model.appendRow(item)              # Añadir un item
+model.appendRow([item1, item2])    # Añadir múltiples items en una fila
+
+# Insertar elementos
+model.insertRow(posicion, item)
+
+# Eliminar elementos
+model.removeRow(fila)              # Eliminar por fila
+model.removeRows(fila, cantidad)   # Eliminar múltiples filas
+model.clear()                      # Eliminar todo
+
+# Obtener elementos
+item = model.item(fila, columna)   # Obtener item específico
+texto = model.data(index)          # Obtener datos de un índice
+```
+
+#### Información del Modelo
+```python
+# Información básica
+filas = model.rowCount()           # Número de filas
+columnas = model.columnCount()     # Número de columnas
+
+# Búsqueda
+indices = model.match(...)         # Buscar elementos
+
+# Encabezados
+model.setHorizontalHeaderLabels(["Col1", "Col2"])  # Encabezados horizontales
+```
+
+### Métodos de QListView
+
+#### Selección
+```python
+# Obtener selección
+index = lista.currentIndex()               # Índice actual
+indices = lista.selectedIndexes()          # Todos los índices seleccionados
+
+# Configurar selección
+lista.setCurrentIndex(index)               # Seleccionar específico
+lista.clearSelection()                     # Limpiar selección
+
+# Modos de selección
+lista.setSelectionMode(QListView.SingleSelection)     # Selección simple
+lista.setSelectionMode(QListView.MultiSelection)      # Selección múltiple
+```
+
+#### Visualización
+```python
+# Modos de vista
+lista.setViewMode(QListView.ListMode)      # Vista de lista
+lista.setViewMode(QListView.IconMode)      # Vista de iconos
+
+# Edición
+lista.setEditTriggers(QListView.DoubleClicked)    # Editar al hacer doble clic
+lista.setEditTriggers(QListView.NoEditTriggers)   # No permitir edición
+```
