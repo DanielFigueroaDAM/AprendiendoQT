@@ -3458,6 +3458,30 @@ lista.setViewMode(QListView.IconMode)      # Vista de iconos
 lista.setEditTriggers(QListView.DoubleClicked)    # Editar al hacer doble clic
 lista.setEditTriggers(QListView.NoEditTriggers)   # No permitir edición
 ```
+# QlineEdit - Contraseña -> 184
+
+# Casillas -> 203
+
+# QMessageBox -> 343
+
+# QHBoxLayout -> 590
+
+# QVBoxLayout -> 737
+
+# Sender -> 836
+
+# Grid ->1133
+
+# QGroupBox -> 1926
+
+# RadioButtons -> 2233
+
+# Tipos De Señales -> 2456
+
+# Grupos - QButtonGroup -> 2647
+
+# Listas y Modelos -> 3100
+
 
 # Guía de PyQt6 - Manejo Avanzado de Modelos y Transferencia de Elementos
 
