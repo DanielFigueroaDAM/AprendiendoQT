@@ -3458,3 +3458,579 @@ lista.setViewMode(QListView.IconMode)      # Vista de iconos
 lista.setEditTriggers(QListView.DoubleClicked)    # Editar al hacer doble clic
 lista.setEditTriggers(QListView.NoEditTriggers)   # No permitir edición
 ```
+
+# Guía de PyQt6 - Manejo Avanzado de Modelos y Transferencia de Elementos
+
+## 28. Transferencia de Elementos entre Modelos
+
+### Código Base - Transferencia entre Listas
+```python
+import sys
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
+from PyQt6.QtWidgets import QApplication, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QListView
+
+class VentanaListas(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+
+    def inicializarUI(self):
+        self.cajaHorizontal = QHBoxLayout()
+
+        self.modelo = QStandardItemModel()
+
+        self.hoja1 = QStandardItem("Hoja 1")
+        self.hoja2 = QStandardItem("Hoja 2")
+        self.hoja3 = QStandardItem("Hoja 3")
+        self.hoja4 = QStandardItem("Hoja 4")
+        self.hoja5 = QStandardItem("Hoja 5")
+
+        self.modelo.appendRow(self.hoja1)
+        self.modelo.appendRow(self.hoja2)
+        self.modelo.appendRow(self.hoja3)
+        self.modelo.appendRow(self.hoja4)
+        self.modelo.appendRow(self.hoja5)
+
+        self.botonesDelMedio()
+        self.lista1()
+        self.lista2()
+
+        self.botonMostrar.clicked.connect(self.mostrar)
+        self.botonOcultar.clicked.connect(self.ocultar)
+
+        self.cajaHorizontal.addWidget(self.listaVisibles)
+        self.cajaHorizontal.addLayout(self.cajaVertical)
+        self.cajaHorizontal.addWidget(self.listaOcultas)
+
+        self.setLayout(self.cajaHorizontal)
+        self.show()
+
+    def botonesDelMedio(self):
+        self.botonOcultar = QPushButton("Ocultar>>")
+        self.botonMostrar = QPushButton("<<Mostrar")
+        self.cajaVertical = QVBoxLayout()
+        self.cajaVertical.addWidget(self.botonOcultar)
+        self.cajaVertical.addWidget(self.botonMostrar)
+
+    def lista1(self):
+        self.listaVisibles = QListView()
+        self.listaVisibles.setModel(self.modelo)
+
+    def lista2(self):
+        self.listaOcultas = QListView()
+        self.modeloOcultas = QStandardItemModel()
+        self.listaOcultas.setModel(self.modeloOcultas)
+
+    def mostrar(self):
+        self.mover(self.modeloOcultas, self.modelo, self.listaOcultas)
+
+    def ocultar(self):
+        self.mover(self.modelo, self.modeloOcultas, self.listaVisibles)
+
+    def mover(self, origen_modelo, destino_modelo, lista_view):
+        indexes = lista_view.selectionModel().selectedIndexes()
+        if not indexes:
+            return
+
+        rows = sorted({i.row() for i in indexes}, reverse=True)
+        for row in rows:
+            destino_modelo.appendRow(origen_modelo.takeRow(row))
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = VentanaListas()
+    sys.exit(app.exec())
+```
+
+## Explicación Detallada del Manejo de Modelos
+
+### El Método `mover` - Núcleo de la Transferencia
+
+```python
+def mover(self, origen_modelo, destino_modelo, lista_view):
+    indexes = lista_view.selectionModel().selectedIndexes()
+    if not indexes:
+        return
+
+    rows = sorted({i.row() for i in indexes}, reverse=True)
+    for row in rows:
+        destino_modelo.appendRow(origen_modelo.takeRow(row))
+```
+
+#### Paso a Paso del Método `mover`:
+
+1. **Obtener Índices Seleccionados**:
+   ```python
+   indexes = lista_view.selectionModel().selectedIndexes()
+   ```
+   - `selectionModel()`: Obtiene el modelo de selección de la vista
+   - `selectedIndexes()`: Retorna una lista de QModelIndex de los elementos seleccionados
+
+2. **Verificar si hay Selección**:
+   ```python
+   if not indexes:
+       return
+   ```
+   - Si no hay elementos seleccionados, termina la función
+
+3. **Extraer y Ordenar Filas**:
+   ```python
+   rows = sorted({i.row() for i in indexes}, reverse=True)
+   ```
+   - `{i.row() for i in indexes}`: Conjunto con los números de fila seleccionados
+   - `sorted(..., reverse=True)`: Ordena de mayor a menor (importante para no alterar índices)
+
+4. **Transferir Filas**:
+   ```python
+   for row in rows:
+       destino_modelo.appendRow(origen_modelo.takeRow(row))
+   ```
+   - `origen_modelo.takeRow(row)`: Remueve la fila del modelo origen y la retorna
+   - `destino_modelo.appendRow(...)`: Añade la fila al modelo destino
+
+## Mejoras y Versión Avanzada
+
+### Código Mejorado con Funcionalidades Adicionales
+
+```python
+import sys
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
+from PyQt6.QtWidgets import (QApplication, QWidget, QHBoxLayout, QPushButton, 
+                             QVBoxLayout, QListView, QLabel, QGroupBox)
+
+class VentanaListasAvanzada(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializarUI()
+
+    def inicializarUI(self):
+        self.setWindowTitle("Transferencia Avanzada entre Modelos")
+        self.setGeometry(100, 100, 700, 400)
+        
+        # Inicializar modelos
+        self.modelo_visibles = QStandardItemModel()
+        self.modelo_ocultas = QStandardItemModel()
+        
+        # Configurar datos iniciales
+        self.configurar_datos_iniciales()
+        
+        # Crear interfaz
+        self.crear_interfaz()
+        
+        # Conectar señales
+        self.conectar_señales()
+        
+        self.show()
+
+    def configurar_datos_iniciales(self):
+        """Configura los datos iniciales en el modelo de visibles"""
+        elementos = ["Hoja 1", "Hoja 2", "Hoja 3", "Hoja 4", "Hoja 5",
+                    "Documento A", "Documento B", "Archivo X", "Archivo Y"]
+        
+        for elemento in elementos:
+            item = QStandardItem(elemento)
+            # Añadir algunas propiedades adicionales
+            item.setToolTip(f"Tooltip para {elemento}")
+            self.modelo_visibles.appendRow(item)
+
+    def crear_interfaz(self):
+        """Crea toda la interfaz de usuario"""
+        layout_principal = QHBoxLayout()
+        
+        # Lista de elementos visibles
+        grupo_visibles = self.crear_grupo_lista(
+            "Elementos Visibles", 
+            self.modelo_visibles, 
+            "lista_visibles"
+        )
+        
+        # Botones centrales
+        grupo_botones = self.crear_grupo_botones()
+        
+        # Lista de elementos ocultos
+        grupo_ocultos = self.crear_grupo_lista(
+            "Elementos Ocultos", 
+            self.modelo_ocultas, 
+            "lista_ocultas"
+        )
+        
+        layout_principal.addWidget(grupo_visibles)
+        layout_principal.addWidget(grupo_botones)
+        layout_principal.addWidget(grupo_ocultos)
+        
+        self.setLayout(layout_principal)
+
+    def crear_grupo_lista(self, titulo, modelo, nombre_vista):
+        """Crea un grupo con una lista y su información"""
+        grupo = QGroupBox(titulo)
+        layout = QVBoxLayout()
+        
+        # Crear la vista de lista
+        lista = QListView()
+        lista.setModel(modelo)
+        lista.setObjectName(nombre_vista)
+        
+        # Configurar selección múltiple
+        lista.setSelectionMode(QListView.SelectionMode.ExtendedSelection)
+        
+        # Etiqueta informativa
+        info_label = QLabel(f"Elementos: {modelo.rowCount()}")
+        info_label.setObjectName(f"info_{nombre_vista}")
+        
+        layout.addWidget(lista)
+        layout.addWidget(info_label)
+        grupo.setLayout(layout)
+        
+        # Guardar referencia a la lista
+        setattr(self, nombre_vista, lista)
+        setattr(self, f"info_{nombre_vista}", info_label)
+        
+        return grupo
+
+    def crear_grupo_botones(self):
+        """Crea el grupo de botones centrales"""
+        grupo = QGroupBox("Acciones")
+        layout = QVBoxLayout()
+        
+        # Botones principales
+        self.boton_ocultar = QPushButton("Ocultar →")
+        self.boton_mostrar = QPushButton("← Mostrar")
+        
+        # Botones adicionales
+        self.boton_ocultar_todos = QPushButton("Ocultar Todos →")
+        self.boton_mostrar_todos = QPushButton("← Mostrar Todos")
+        self.boton_intercambiar = QPushButton("↔ Intercambiar")
+        
+        # Botones de información
+        self.boton_info = QPushButton("Información")
+        
+        layout.addWidget(self.boton_ocultar)
+        layout.addWidget(self.boton_mostrar)
+        layout.addStretch(1)
+        layout.addWidget(self.boton_ocultar_todos)
+        layout.addWidget(self.boton_mostrar_todos)
+        layout.addWidget(self.boton_intercambiar)
+        layout.addStretch(1)
+        layout.addWidget(self.boton_info)
+        
+        grupo.setLayout(layout)
+        return grupo
+
+    def conectar_señales(self):
+        """Conecta todas las señales de los botones"""
+        self.boton_ocultar.clicked.connect(self.ocultar_seleccionados)
+        self.boton_mostrar.clicked.connect(self.mostrar_seleccionados)
+        self.boton_ocultar_todos.clicked.connect(self.ocultar_todos)
+        self.boton_mostrar_todos.clicked.connect(self.mostrar_todos)
+        self.boton_intercambiar.clicked.connect(self.intercambiar_listas)
+        self.boton_info.clicked.connect(self.mostrar_informacion)
+        
+        # Conectar señales de cambio en los modelos
+        self.modelo_visibles.rowsInserted.connect(self.actualizar_contadores)
+        self.modelo_visibles.rowsRemoved.connect(self.actualizar_contadores)
+        self.modelo_ocultas.rowsInserted.connect(self.actualizar_contadores)
+        self.modelo_ocultas.rowsRemoved.connect(self.actualizar_contadores)
+
+    def ocultar_seleccionados(self):
+        """Mueve los elementos seleccionados de visibles a ocultos"""
+        self.mover_elementos(self.modelo_visibles, self.modelo_ocultas, self.lista_visibles)
+
+    def mostrar_seleccionados(self):
+        """Mueve los elementos seleccionados de ocultos a visibles"""
+        self.mover_elementos(self.modelo_ocultas, self.modelo_visibles, self.lista_ocultas)
+
+    def ocultar_todos(self):
+        """Mueve todos los elementos de visibles a ocultos"""
+        self.mover_todos(self.modelo_visibles, self.modelo_ocultas)
+
+    def mostrar_todos(self):
+        """Mueve todos los elementos de ocultos a visibles"""
+        self.mover_todos(self.modelo_ocultas, self.modelo_visibles)
+
+    def intercambiar_listas(self):
+        """Intercambia todos los elementos entre las dos listas"""
+        # Guardar elementos actuales
+        elementos_visibles = []
+        elementos_ocultos = []
+        
+        # Recopilar elementos visibles
+        for row in range(self.modelo_visibles.rowCount()):
+            item = self.modelo_visibles.item(row)
+            elementos_ocultos.append(QStandardItem(item.text()))
+        
+        # Recopilar elementos ocultos
+        for row in range(self.modelo_ocultas.rowCount()):
+            item = self.modelo_ocultas.item(row)
+            elementos_visibles.append(QStandardItem(item.text()))
+        
+        # Limpiar modelos
+        self.modelo_visibles.clear()
+        self.modelo_ocultas.clear()
+        
+        # Añadir elementos intercambiados
+        for item in elementos_visibles:
+            self.modelo_visibles.appendRow(item)
+        
+        for item in elementos_ocultos:
+            self.modelo_ocultas.appendRow(item)
+
+    def mostrar_informacion(self):
+        """Muestra información detallada de los modelos"""
+        visibles = self.modelo_visibles.rowCount()
+        ocultos = self.modelo_ocultas.rowCount()
+        total = visibles + ocultos
+        
+        info = f"""
+        Información de los Modelos:
+        • Elementos visibles: {visibles}
+        • Elementos ocultos: {ocultos}
+        • Total de elementos: {total}
+        """
+        
+        print(info)
+
+    def mover_elementos(self, origen_modelo, destino_modelo, lista_view):
+        """Mueve elementos seleccionados de un modelo a otro"""
+        indexes = lista_view.selectionModel().selectedIndexes()
+        
+        if not indexes:
+            print("No hay elementos seleccionados")
+            return
+
+        # Ordenar filas de mayor a menor para no alterar índices durante la eliminación
+        rows = sorted({index.row() for index in indexes}, reverse=True)
+        
+        elementos_movidos = 0
+        for row in rows:
+            # Tomar la fila completa del modelo origen
+            items_fila = origen_modelo.takeRow(row)
+            if items_fila:  # Verificar que la fila no esté vacía
+                destino_modelo.appendRow(items_fila)
+                elementos_movidos += 1
+        
+        print(f"Se movieron {elementos_movidos} elementos")
+
+    def mover_todos(self, origen_modelo, destino_modelo):
+        """Mueve todos los elementos de un modelo a otro"""
+        # Contar elementos antes de mover
+        elementos_a_mover = origen_modelo.rowCount()
+        
+        # Mover todos los elementos
+        while origen_modelo.rowCount() > 0:
+            items_fila = origen_modelo.takeRow(0)
+            destino_modelo.appendRow(items_fila)
+        
+        print(f"Se movieron {elementos_a_mover} elementos")
+
+    def actualizar_contadores(self):
+        """Actualiza los contadores de elementos en las etiquetas"""
+        self.info_lista_visibles.setText(f"Elementos: {self.modelo_visibles.rowCount()}")
+        self.info_lista_ocultas.setText(f"Elementos: {self.modelo_ocultas.rowCount()}")
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = VentanaListasAvanzada()
+    sys.exit(app.exec())
+```
+
+## Conceptos Avanzados de Manejo de Modelos
+
+### 1. **Métodos Clave de QStandardItemModel**
+
+#### takeRow() - Extraer Fila
+```python
+items_fila = modelo.takeRow(fila_numero)
+```
+- **Retorna**: Una lista de QStandardItem de esa fila
+- **Efecto**: Elimina la fila del modelo
+- **Útil para**: Transferir elementos entre modelos
+
+#### appendRow() - Añadir Fila
+```python
+modelo.appendRow([item1, item2])  # Lista de items
+modelo.appendRow(item_single)     # Item único
+```
+
+#### insertRow() - Insertar Fila
+```python
+modelo.insertRow(posicion, item)
+```
+
+### 2. **Manejo de Selecciones Múltiples**
+
+```python
+# Configurar selección múltiple
+lista.setSelectionMode(QListView.SelectionMode.ExtendedSelection)
+
+# Obtener selecciones múltiples
+indexes = lista.selectionModel().selectedIndexes()
+
+# Procesar selecciones múltiples
+rows = {index.row() for index in indexes}  # Usar conjunto para evitar duplicados
+```
+
+### 3. **Señales de Cambio en el Modelo**
+
+```python
+# Conectar señales para reaccionar a cambios
+modelo.rowsInserted.connect(self.actualizar_ui)
+modelo.rowsRemoved.connect(self.actualizar_ui)
+modelo.dataChanged.connect(self.datos_modificados)
+```
+
+### 4. **Trabajar con Índices (QModelIndex)**
+
+```python
+# Obtener información del índice
+fila = index.row()
+columna = index.column()
+datos = index.data()  # Datos en esa posición
+
+# Obtener item desde índice
+item = modelo.itemFromIndex(index)
+```
+
+## Ejemplo: Filtrado y Búsqueda en Modelos
+
+```python
+import sys
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
+from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
+                             QListView, QLineEdit, QPushButton, QLabel,
+                             QGroupBox)
+
+class FiltradoModelos(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.modelo_completo = QStandardItemModel()
+        self.modelo_filtrado = QStandardItemModel()
+        self.inicializarUI()
+
+    def inicializarUI(self):
+        self.setWindowTitle("Filtrado de Modelos")
+        self.setGeometry(100, 100, 600, 400)
+        
+        # Datos de ejemplo
+        self.cargar_datos_ejemplo()
+        
+        layout = QVBoxLayout()
+        
+        # Controles de filtrado
+        layout_controles = QHBoxLayout()
+        self.entrada_filtro = QLineEdit()
+        self.entrada_filtro.setPlaceholderText("Texto a filtrar...")
+        self.entrada_filtro.textChanged.connect(self.filtrar_modelo)
+        
+        self.boton_limpiar = QPushButton("Limpiar Filtro")
+        self.boton_limpiar.clicked.connect(self.limpiar_filtro)
+        
+        layout_controles.addWidget(QLabel("Filtro:"))
+        layout_controles.addWidget(self.entrada_filtro)
+        layout_controles.addWidget(self.boton_limpiar)
+        
+        # Lista
+        self.lista = QListView()
+        self.lista.setModel(self.modelo_completo)
+        
+        # Información
+        self.etiqueta_info = QLabel(f"Elementos: {self.modelo_completo.rowCount()}")
+        
+        layout.addLayout(layout_controles)
+        layout.addWidget(self.lista)
+        layout.addWidget(self.etiqueta_info)
+        
+        self.setLayout(layout)
+
+    def cargar_datos_ejemplo(self):
+        elementos = [
+            "Manzana", "Banana", "Naranja", "Pera", "Uva",
+            "Zanahoria", "Tomate", "Lechuga", "Pepino", "Cebolla",
+            "Archivo importante", "Documento confidencial", "Backup data"
+        ]
+        
+        for elemento in elementos:
+            self.modelo_completo.appendRow(QStandardItem(elemento))
+
+    def filtrar_modelo(self, texto):
+        texto = texto.lower().strip()
+        
+        if not texto:
+            self.lista.setModel(self.modelo_completo)
+            self.actualizar_info()
+            return
+        
+        # Filtrar elementos
+        self.modelo_filtrado.clear()
+        
+        for row in range(self.modelo_completo.rowCount()):
+            item = self.modelo_completo.item(row)
+            if texto in item.text().lower():
+                # Crear nuevo item con el mismo texto
+                nuevo_item = QStandardItem(item.text())
+                self.modelo_filtrado.appendRow(nuevo_item)
+        
+        self.lista.setModel(self.modelo_filtrado)
+        self.actualizar_info()
+
+    def limpiar_filtro(self):
+        self.entrada_filtro.clear()
+        self.lista.setModel(self.modelo_completo)
+        self.actualizar_info()
+
+    def actualizar_info(self):
+        modelo_actual = self.lista.model()
+        self.etiqueta_info.setText(f"Elementos: {modelo_actual.rowCount()}")
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ventana = FiltradoModelos()
+    ventana.show()
+    sys.exit(app.exec())
+```
+
+## Buenas Prácticas en el Manejo de Modelos
+
+### 1. **Eficiencia en Transferencias**
+```python
+# ❌ Ineficiente - Mover uno por uno en orden ascendente
+for row in range(origen.rowCount()):
+    destino.appendRow(origen.takeRow(row))
+
+# ✅ Eficiente - Mover en orden descendente
+rows = list(range(origen.rowCount()))
+for row in sorted(rows, reverse=True):
+    destino.appendRow(origen.takeRow(row))
+```
+
+### 2. **Manejo de Memoria**
+```python
+# Liberar memoria cuando se eliminan elementos
+def limpiar_modelo(modelo):
+    modelo.clear()
+    # Opcional: forzar garbage collection
+    import gc
+    gc.collect()
+```
+
+### 3. **Validación de Índices**
+```python
+def elemento_valido(self, index, modelo):
+    return index.isValid() and 0 <= index.row() < modelo.rowCount()
+```
+
+### 4. **Actualización de Vistas**
+```python
+# Las vistas se actualizan automáticamente con:
+modelo.layoutChanged.emit()
+
+# O forzar actualización específica:
+vista.reset()
+```
+
+## Resumen de Conceptos Clave
+
+1. **takeRow()/appendRow()**: Para transferir elementos entre modelos
+2. **Manejo de selecciones**: Usar `selectedIndexes()` para múltiples selecciones
+3. **Orden de procesamiento**: Siempre procesar de mayor a menor índice
+4. **Señales del modelo**: Conectar para reaccionar a cambios automáticamente
+5. **Filtrado**: Crear modelos separados para datos filtrados vs completos

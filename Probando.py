@@ -1,173 +1,240 @@
 import sys
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
-from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout,
-                             QHBoxLayout, QTextEdit, QPushButton,
-                             QListView, QLabel, QGroupBox)
+from PyQt6.QtWidgets import (QApplication, QWidget, QHBoxLayout, QPushButton,
+                             QVBoxLayout, QListView, QLabel, QGroupBox)
 
 
-class VentanaConListas(QWidget):
+class VentanaListasAvanzada(QWidget):
     def __init__(self):
         super().__init__()
         self.inicializarUI()
-        self.show()
 
     def inicializarUI(self):
-        self.setWindowTitle("Lista con Model-View")
-        self.setGeometry(100, 100, 500, 400)
+        self.setWindowTitle("Transferencia Avanzada entre Modelos")
+        self.setGeometry(100, 100, 700, 400)
 
-        # Inicializar componentes
-        self.crear_area_entrada()
-        self.crear_lista()
-        self.crear_controles_avanzados()
+        # Inicializar modelos
+        self.modelo_visibles = QStandardItemModel()
+        self.modelo_ocultas = QStandardItemModel()
 
-        # Layout principal
-        layout_principal = QVBoxLayout()
+        # Configurar datos iniciales
+        self.configurar_datos_iniciales()
 
-        # Grupo para área de entrada
-        grupo_entrada = QGroupBox("Añadir Elementos a la Lista")
-        grupo_entrada.setLayout(self.cajaHorizontal)
-        layout_principal.addWidget(grupo_entrada)
+        # Crear interfaz
+        self.crear_interfaz()
 
-        # Grupo para lista
-        grupo_lista = QGroupBox("Lista de Elementos")
-        layout_lista = QVBoxLayout()
-        layout_lista.addWidget(self.lista1)
-        grupo_lista.setLayout(layout_lista)
-        layout_principal.addWidget(grupo_lista)
+        # Conectar señales
+        self.conectar_señales()
 
-        # Controles avanzados
-        layout_principal.addWidget(self.grupo_controles)
+        self.show()
+
+    def configurar_datos_iniciales(self):
+        """Configura los datos iniciales en el modelo de visibles"""
+        elementos = ["Hoja 1", "Hoja 2", "Hoja 3", "Hoja 4", "Hoja 5",
+                     "Documento A", "Documento B", "Archivo X", "Archivo Y"]
+
+        for elemento in elementos:
+            item = QStandardItem(elemento)
+            # Añadir algunas propiedades adicionales
+            item.setToolTip(f"Tooltip para {elemento}")
+            self.modelo_visibles.appendRow(item)
+
+    def crear_interfaz(self):
+        """Crea toda la interfaz de usuario"""
+        layout_principal = QHBoxLayout()
+
+        # Lista de elementos visibles
+        grupo_visibles = self.crear_grupo_lista(
+            "Elementos Visibles",
+            self.modelo_visibles,
+            "lista_visibles"
+        )
+
+        # Botones centrales
+        grupo_botones = self.crear_grupo_botones()
+
+        # Lista de elementos ocultos
+        grupo_ocultos = self.crear_grupo_lista(
+            "Elementos Ocultos",
+            self.modelo_ocultas,
+            "lista_ocultas"
+        )
+
+        layout_principal.addWidget(grupo_visibles)
+        layout_principal.addWidget(grupo_botones)
+        layout_principal.addWidget(grupo_ocultos)
 
         self.setLayout(layout_principal)
 
-    def crear_area_entrada(self):
-        """Crea el área para añadir nuevos elementos"""
-        self.label = QTextEdit()
-        self.label.setMaximumHeight(60)  # Limitar altura
-        self.label.setPlaceholderText("Escribe el texto del nuevo elemento...")
+    def crear_grupo_lista(self, titulo, modelo, nombre_vista):
+        """Crea un grupo con una lista y su información"""
+        grupo = QGroupBox(titulo)
+        layout = QVBoxLayout()
 
-        self.botonAñadir = QPushButton("Añadir")
-        self.botonBorrar = QPushButton("Borrar Último")
-        self.botonLimpiar = QPushButton("Limpiar Todo")
+        # Crear la vista de lista
+        lista = QListView()
+        lista.setModel(modelo)
+        lista.setObjectName(nombre_vista)
 
-        self.cajaHorizontal = QHBoxLayout()
-        self.cajaHorizontal.addWidget(self.label)
-        self.cajaHorizontal.addWidget(self.botonAñadir)
-        self.cajaHorizontal.addWidget(self.botonBorrar)
-        self.cajaHorizontal.addWidget(self.botonLimpiar)
+        # Configurar selección múltiple
+        lista.setSelectionMode(QListView.SelectionMode.ExtendedSelection)
 
-        # Conectar señales
-        self.botonAñadir.clicked.connect(self.anadirElemento)
-        self.botonBorrar.clicked.connect(self.borrarUltimoElemento)
-        self.botonLimpiar.clicked.connect(self.limpiarLista)
+        # Etiqueta informativa
+        info_label = QLabel(f"Elementos: {modelo.rowCount()}")
+        info_label.setObjectName(f"info_{nombre_vista}")
 
-    def crear_lista(self):
-        """Inicializa el modelo y la vista de lista"""
-        # Crear el modelo
-        self.model = QStandardItemModel()
-        self.model.setHorizontalHeaderLabels(["Elementos de la Lista"])  # Encabezado
+        layout.addWidget(lista)
+        layout.addWidget(info_label)
+        grupo.setLayout(layout)
 
-        # Crear la vista
-        self.lista1 = QListView()
-        self.lista1.setModel(self.model)  # Conectar modelo con vista
+        # Guardar referencia a la lista
+        setattr(self, nombre_vista, lista)
+        setattr(self, f"info_{nombre_vista}", info_label)
 
-        # Añadir algunos elementos de ejemplo
-        elementos_ejemplo = ["Elemento de ejemplo 1", "Elemento de ejemplo 2"]
-        for elemento in elementos_ejemplo:
-            item = QStandardItem(elemento)
-            self.model.appendRow(item)
+        return grupo
 
-    def crear_controles_avanzados(self):
-        """Crea controles adicionales para gestionar la lista"""
-        self.grupo_controles = QGroupBox("Controles de la Lista")
-        layout_controles = QHBoxLayout()
+    def crear_grupo_botones(self):
+        """Crea el grupo de botones centrales"""
+        grupo = QGroupBox("Acciones")
+        layout = QVBoxLayout()
+
+        # Botones principales
+        self.boton_ocultar = QPushButton("Ocultar →")
+        self.boton_mostrar = QPushButton("← Mostrar")
 
         # Botones adicionales
-        self.botonBorrarSeleccionado = QPushButton("Borrar Seleccionado")
-        self.botonEditar = QPushButton("Editar Seleccionado")
-        self.botonContar = QPushButton("Contar Elementos")
+        self.boton_ocultar_todos = QPushButton("Ocultar Todos →")
+        self.boton_mostrar_todos = QPushButton("← Mostrar Todos")
+        self.boton_intercambiar = QPushButton("↔ Intercambiar")
 
-        # Etiqueta para información
-        self.etiqueta_info = QLabel("Elementos: 2")
+        # Botones de información
+        self.boton_info = QPushButton("Información")
 
-        layout_controles.addWidget(self.botonBorrarSeleccionado)
-        layout_controles.addWidget(self.botonEditar)
-        layout_controles.addWidget(self.botonContar)
-        layout_controles.addWidget(self.etiqueta_info)
+        layout.addWidget(self.boton_ocultar)
+        layout.addWidget(self.boton_mostrar)
+        layout.addStretch(1)
+        layout.addWidget(self.boton_ocultar_todos)
+        layout.addWidget(self.boton_mostrar_todos)
+        layout.addWidget(self.boton_intercambiar)
+        layout.addStretch(1)
+        layout.addWidget(self.boton_info)
 
-        self.grupo_controles.setLayout(layout_controles)
+        grupo.setLayout(layout)
+        return grupo
 
-        # Conectar señales
-        self.botonBorrarSeleccionado.clicked.connect(self.borrarSeleccionado)
-        self.botonEditar.clicked.connect(self.editarSeleccionado)
-        self.botonContar.clicked.connect(self.actualizarContador)
+    def conectar_señales(self):
+        """Conecta todas las señales de los botones"""
+        self.boton_ocultar.clicked.connect(self.ocultar_seleccionados)
+        self.boton_mostrar.clicked.connect(self.mostrar_seleccionados)
+        self.boton_ocultar_todos.clicked.connect(self.ocultar_todos)
+        self.boton_mostrar_todos.clicked.connect(self.mostrar_todos)
+        self.boton_intercambiar.clicked.connect(self.intercambiar_listas)
+        self.boton_info.clicked.connect(self.mostrar_informacion)
 
-        # Conectar señal de selección cambiada
-        self.lista1.selectionModel().selectionChanged.connect(self.seleccionCambiada)
+        # Conectar señales de cambio en los modelos
+        self.modelo_visibles.rowsInserted.connect(self.actualizar_contadores)
+        self.modelo_visibles.rowsRemoved.connect(self.actualizar_contadores)
+        self.modelo_ocultas.rowsInserted.connect(self.actualizar_contadores)
+        self.modelo_ocultas.rowsRemoved.connect(self.actualizar_contadores)
 
-    def anadirElemento(self):
-        """Añade un nuevo elemento a la lista"""
-        text = self.label.toPlainText().strip()
-        if not text:
+    def ocultar_seleccionados(self):
+        """Mueve los elementos seleccionados de visibles a ocultos"""
+        self.mover_elementos(self.modelo_visibles, self.modelo_ocultas, self.lista_visibles)
+
+    def mostrar_seleccionados(self):
+        """Mueve los elementos seleccionados de ocultos a visibles"""
+        self.mover_elementos(self.modelo_ocultas, self.modelo_visibles, self.lista_ocultas)
+
+    def ocultar_todos(self):
+        """Mueve todos los elementos de visibles a ocultos"""
+        self.mover_todos(self.modelo_visibles, self.modelo_ocultas)
+
+    def mostrar_todos(self):
+        """Mueve todos los elementos de ocultos a visibles"""
+        self.mover_todos(self.modelo_ocultas, self.modelo_visibles)
+
+    def intercambiar_listas(self):
+        """Intercambia todos los elementos entre las dos listas"""
+        # Guardar elementos actuales
+        elementos_visibles = []
+        elementos_ocultos = []
+
+        # Recopilar elementos visibles
+        for row in range(self.modelo_visibles.rowCount()):
+            item = self.modelo_visibles.item(row)
+            elementos_ocultos.append(QStandardItem(item.text()))
+
+        # Recopilar elementos ocultos
+        for row in range(self.modelo_ocultas.rowCount()):
+            item = self.modelo_ocultas.item(row)
+            elementos_visibles.append(QStandardItem(item.text()))
+
+        # Limpiar modelos
+        self.modelo_visibles.clear()
+        self.modelo_ocultas.clear()
+
+        # Añadir elementos intercambiados
+        for item in elementos_visibles:
+            self.modelo_visibles.appendRow(item)
+
+        for item in elementos_ocultos:
+            self.modelo_ocultas.appendRow(item)
+
+    def mostrar_informacion(self):
+        """Muestra información detallada de los modelos"""
+        visibles = self.modelo_visibles.rowCount()
+        ocultos = self.modelo_ocultas.rowCount()
+        total = visibles + ocultos
+
+        info = f"""
+        Información de los Modelos:
+        • Elementos visibles: {visibles}
+        • Elementos ocultos: {ocultos}
+        • Total de elementos: {total}
+        """
+
+        print(info)
+
+    def mover_elementos(self, origen_modelo, destino_modelo, lista_view):
+        """Mueve elementos seleccionados de un modelo a otro"""
+        indexes = lista_view.selectionModel().selectedIndexes()
+
+        if not indexes:
+            print("No hay elementos seleccionados")
             return
 
-        # Crear y configurar el item
-        item = QStandardItem(text)
-        item.setToolTip(f"Elemento añadido: {text}")
+        # Ordenar filas de mayor a menor para no alterar índices durante la eliminación
+        rows = sorted({index.row() for index in indexes}, reverse=True)
 
-        # Añadir al modelo
-        self.model.appendRow(item)
+        elementos_movidos = 0
+        for row in rows:
+            # Tomar la fila completa del modelo origen
+            items_fila = origen_modelo.takeRow(row)
+            if items_fila:  # Verificar que la fila no esté vacía
+                destino_modelo.appendRow(items_fila)
+                elementos_movidos += 1
 
-        # Limpiar el área de texto
-        self.label.clear()
+        print(f"Se movieron {elementos_movidos} elementos")
 
-        # Actualizar contador
-        self.actualizarContador()
+    def mover_todos(self, origen_modelo, destino_modelo):
+        """Mueve todos los elementos de un modelo a otro"""
+        # Contar elementos antes de mover
+        elementos_a_mover = origen_modelo.rowCount()
 
-        # Seleccionar el nuevo elemento
-        index = self.model.index(self.model.rowCount() - 1, 0)
-        self.lista1.setCurrentIndex(index)
+        # Mover todos los elementos
+        while origen_modelo.rowCount() > 0:
+            items_fila = origen_modelo.takeRow(0)
+            destino_modelo.appendRow(items_fila)
 
-    def borrarUltimoElemento(self):
-        """Elimina el último elemento de la lista"""
-        if self.model.rowCount() > 0:
-            self.model.removeRow(self.model.rowCount() - 1)
-            self.actualizarContador()
+        print(f"Se movieron {elementos_a_mover} elementos")
 
-    def borrarSeleccionado(self):
-        """Elimina el elemento seleccionado"""
-        index = self.lista1.currentIndex()
-        if index.isValid():
-            self.model.removeRow(index.row())
-            self.actualizarContador()
-
-    def editarSeleccionado(self):
-        """Permite editar el elemento seleccionado"""
-        index = self.lista1.currentIndex()
-        if index.isValid():
-            # Activar edición en la vista
-            self.lista1.edit(index)
-
-    def limpiarLista(self):
-        """Elimina todos los elementos de la lista"""
-        self.model.clear()
-        self.model.setHorizontalHeaderLabels(["Elementos de la Lista"])
-        self.actualizarContador()
-
-    def seleccionCambiada(self):
-        """Maneja el cambio de selección en la lista"""
-        index = self.lista1.currentIndex()
-        if index.isValid():
-            elemento = self.model.itemFromIndex(index).text()
-            self.etiqueta_info.setText(f"Seleccionado: {elemento}")
-
-    def actualizarContador(self):
-        """Actualiza el contador de elementos"""
-        count = self.model.rowCount()
-        self.etiqueta_info.setText(f"Elementos: {count}")
+    def actualizar_contadores(self):
+        """Actualiza los contadores de elementos en las etiquetas"""
+        self.info_lista_visibles.setText(f"Elementos: {self.modelo_visibles.rowCount()}")
+        self.info_lista_ocultas.setText(f"Elementos: {self.modelo_ocultas.rowCount()}")
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ventana = VentanaConListas()
+    ventana = VentanaListasAvanzada()
     sys.exit(app.exec())
