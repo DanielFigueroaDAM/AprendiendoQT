@@ -1132,6 +1132,8 @@ def validar_formulario(self):
 
 ## 21. QGridLayout - Diseño en Cuadrícula
 
+![img_14.png](img_14.png)
+
 ### Código de Calculadora con QGridLayout
 ```python
 import sys
